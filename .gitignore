@@ -59,3 +59,9 @@ typings/
 
 # next.js build output
 .next
+
+*.install
+.merlin
+esy.lock.json
+_esy/
+_build/
