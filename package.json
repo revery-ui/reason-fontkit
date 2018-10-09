@@ -27,7 +27,8 @@
     "@esy-ocaml/reason": "*",
     "refmterr": "*",
     "reason-glfw": "*",
-    "esy-cmake": "*"
+    "esy-cmake": "*",
+    "esy-freetype2": "*"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"
