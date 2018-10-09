@@ -1,0 +1,35 @@
+{
+  "name": "reason-freetype2",
+  "version": "0.1.0",
+  "description": "Freetype2 bindings for Reason / OCaml",
+  "license": "MIT",
+  "esy": {
+    "build": [
+        ["dune", "build", "--root", "."]
+    ],
+    "install": [
+        "esy-installer"
+    ],
+    "buildsInSource":"_build"
+  },
+  "peerDependencies": {
+    "ocaml": "~4.6.0"
+  },
+  "resolutions": {
+    "@opam/menhir": "20171013",
+    "@opam/re": "1.8.0",
+    "reason-glfw": "link:../reason-glfw",
+    "esy-cmake": "github:bryphe/esy-cmake#8afd4a1",
+    "esy-freetype2": "github:bryphe/esy-freetype2:b40f413"
+  },
+  "dependencies": {
+    "@opam/dune": "*",
+    "@esy-ocaml/reason": "*",
+    "refmterr": "*",
+    "reason-glfw": "*",
+    "esy-cmake": "*"
+  },
+  "devDependencies": {
+    "ocaml": "~4.6.0"
+  }
+}
