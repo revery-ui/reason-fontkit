@@ -1,0 +1,7 @@
+(executable
+    (name test_freetype)
+    (preprocess (pps lwt_ppx))
+    (public_name test_freetype)
+    (libraries
+        refreetype
+            ))
