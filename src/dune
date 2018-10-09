@@ -1,3 +1,4 @@
 (library
     (name refreetype)
+    (cxx_names freetype)
     (public_name refreetype))
