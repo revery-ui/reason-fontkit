@@ -1,4 +1,12 @@
 (library
     (name refreetype)
+    (public_name refreetype)
     (cxx_names freetype)
-    (public_name refreetype))
+    (library_flags (:include flags.sexp))
+    (c_flags (:include c_flags.sexp))
+    (cxx_flags (:include cxx_flags.sexp)))
+
+(rule
+    (targets c_flags.sexp cxx_flags.sexp flags.sexp)
+    (deps (:discover config/discover.exe))
+    (action (run %{discover})))
