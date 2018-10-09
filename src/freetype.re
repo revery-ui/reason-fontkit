@@ -1,1 +1,3 @@
-external hello: unit => unit = "caml_hello";
+open Reglfw;
+
+external hello: unit => Image.t = "caml_hello";

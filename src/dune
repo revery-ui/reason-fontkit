@@ -4,7 +4,8 @@
     (cxx_names freetype)
     (library_flags (:include flags.sexp))
     (c_flags (:include c_flags.sexp))
-    (cxx_flags (:include cxx_flags.sexp)))
+    (cxx_flags (:include cxx_flags.sexp))
+    (libraries reglfw))
 
 (rule
     (targets c_flags.sexp cxx_flags.sexp flags.sexp)

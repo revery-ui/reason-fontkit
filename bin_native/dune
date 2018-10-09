@@ -3,5 +3,13 @@
     (preprocess (pps lwt_ppx))
     (public_name test_freetype)
     (libraries
+        bigarray
+        lwt
+        lwt.unix
+        reglfw
         refreetype
             ))
+
+(install
+    (section bin)
+    (files Roboto-Regular.ttf image4.jpg))
