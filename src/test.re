@@ -1,1 +1,1 @@
-let () => print_endline("hello from lib");
+ print_endline("hello from lib");
