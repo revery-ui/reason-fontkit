@@ -2,10 +2,11 @@ exception FreeTypeInitializeException(string);
 exception FreeTypeLoadFaceException(string);
 exception FreeTypeRenderCharacterException(string);
 
-open Freetype;
+open FreeType_Bindings;
 open Reglfw;
+open Reglfw.Glfw;
 
-type face = FT_Face;
+type face = ft_face;
 
 type character = {
     image: Image.t,
@@ -14,13 +15,13 @@ type character = {
     advance: int
 };
 
-let freeTypeInstance = ref(option(Freetype));
+let freeTypeInstance: ref(option(ft_freetype)) = ref(None);
 
 let initOrGet = () => {
-    switch (freeTypeInstance) {
+    switch (freeTypeInstance^) {
     | Some(ft) => ft
     | None => {
-        let ft = FT_Init_FreeType();
+        let ft = ft_init();
         switch (ft) {
         | Success(f) => {
             freeTypeInstance := Some(f);
@@ -32,27 +33,27 @@ let initOrGet = () => {
     } 
 }
 
-let open = (fontFile: string, size: int) => {
+let load = (fontFile: string, size: int) => {
     let ft = initOrGet();
 
-    let face = FT_New_Face(ft, fontFile, size);
-    switch (ft) {
+    let face = ft_new_face(ft, fontFile, size);
+    switch (face) {
     | Success(f) => f
     | Error(msg) => raise(FreeTypeLoadFaceException(msg));
     }
 }
 
 let getCharacter = (face, character: char) => {
-    let loadingChar = FT_Load_Char(face, character);
+    let loadingChar = ft_load_char(face, character);
     let char = switch (loadingChar) {
     | Success(c) => c
     | Error(msg) => raise(FreeTypeRenderCharacterException(msg))
     };
 
-    let image = FT_Char_Get_Image(char);
-    let (bearingX, bearingY, advance) = FT_Char_Get_Metrics(char);
+    let image = ft_char_get_image(char);
+    let (bearingX, bearingY, advance) = ft_char_get_metrics(char);
 
-    let ret: Character = {
+    let ret: character = {
         image,
         bearingX,
         bearingY,
@@ -61,16 +62,16 @@ let getCharacter = (face, character: char) => {
     ret;
 };
 
-type TextureCoordinates = {
+type textureCoordinates = {
     startX: float,
     startY: float,
     endX: float,
     endY: float
 }
 
-type Glyph = {
+type glyph = {
     texture: Glfw.texture,
-    textureCoordinates: TextureCoordinates,
+    textureCoordinates: textureCoordinates,
     width: int,
     height: int,
     bearingX: int,
@@ -78,7 +79,7 @@ type Glyph = {
     advance: int
 }
 
-let getGlyph = (face: Face, character: char) => {
+let getGlyph = (face: face, character: char) => {
     /* TODO: Cache value! */
     /* TODO: Move to a character atlas! */
 
@@ -88,24 +89,39 @@ let getGlyph = (face: Face, character: char) => {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     let texture = glCreateTexture();
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, GL_RGB, GL_UNSIGNED_BYTE, character.image);
+    glTexImage2D(GL_TEXTURE_2D, GL_UNSIGNED_BYTE, character.image);
 
-    let texCoords: TextureCoordinates = {
+    let texCoords: textureCoordinates = {
         startX: 0.0,
         startY: 0.0,
         endX: 0.0,
         endY: 0.0
     };
+
+    let ret: glyph = {
+        texture,
+        textureCoordinates: texCoords,
+        bearingX: character.bearingX,
+        bearingY: character.bearingY, 
+        advance: character.advance,
+        width: 0,
+        height: 0,
+    }
+
+    ret;
 };
 
-let layout = (face: Face, line: string) => {
+/*
+let layout = (face: face, line: string) => {
 
 };
 
-let draw = (face: Face, line: string, x: number, y: number) => {
+let draw = (face: face, line: string, x: int, y: int) => {
 
 };
+*/

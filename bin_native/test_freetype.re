@@ -1,6 +1,7 @@
 open Reglfw;
 open Reglfw.Glfw;
-open Refreetype.Freetype;
+
+open Refreetype;
 
 print_endline("Hello, world!");
 
@@ -39,8 +40,8 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  let font = Font.open("Roboto.ttf", 32);
-  let character = Font.getGlyph(font, "A");
+  let font = Font.load("Roboto.ttf", 32);
+  let character = Font.getGlyph(font, 'A');
 
   let vsSource = {|
         #ifndef GL_ES
@@ -107,7 +108,7 @@ let run = () => {
     glDepthFunc(GL_LEQUAL);
 
     glUseProgram(shaderProgram);
-    glBindTexture(character.texture);
+    glBindTexture(GL_TEXTURE_2D, character.texture);
 
     glBindBuffer(GL_ARRAY_BUFFER, vb);
     glVertexAttribPointer(posAttribute, 2, GL_FLOAT, false);

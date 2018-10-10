@@ -15,7 +15,7 @@ type ft_metrics = (int, int, int);
 external ft_init: unit => ft_return(ft_freetype) = "caml_ft_init_freetype";
 
 external ft_new_face: (ft_freetype, string, int) => ft_return(ft_face) = "caml_ft_new_face";
-external ft_load_char: (ft_face, string) => ft_return(ft_character) = "caml_ft_load_char";
+external ft_load_char: (ft_face, char) => ft_return(ft_character) = "caml_ft_load_char";
 
 external ft_char_get_image: (ft_character) => Image.t = "caml_ft_char_get_image";
 external ft_char_get_metrics: (ft_character) => ft_metrics = "caml_ft_char_get_bearing";
