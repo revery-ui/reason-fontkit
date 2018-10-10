@@ -39,8 +39,8 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  let font = hello();
-  Image.debug_print(font);
+  let font = Font.open("Roboto.ttf", 32);
+  let character = Font.getGlyph(font, "A");
 
   let vsSource = {|
         #ifndef GL_ES
@@ -99,16 +99,6 @@ let run = () => {
 
   let posAttribute = glGetAttribLocation(shaderProgram, "aVertexPosition");
   let texAttribute = glGetAttribLocation(shaderProgram, "aTexCoord");
-  
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  let texture = glCreateTexture();
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, GL_RGB, GL_UNSIGNED_BYTE, font);
 
   glfwRenderLoop((_t) => {
     glClearColor(1.0, 0., 0., 1.);
@@ -117,6 +107,7 @@ let run = () => {
     glDepthFunc(GL_LEQUAL);
 
     glUseProgram(shaderProgram);
+    glBindTexture(character.texture);
 
     glBindBuffer(GL_ARRAY_BUFFER, vb);
     glVertexAttribPointer(posAttribute, 2, GL_FLOAT, false);
