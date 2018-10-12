@@ -18,9 +18,14 @@ advance: int,
 image: Image.t
 };
 
-external fk_new_face: (string, int) => fk_return(fk_face) = "caml_fk_new_face";
+type fk_shape = {
+    codepoint: int,
+    cluster: int
+};
 
+external fk_new_face: (string, int) => fk_return(fk_face) = "caml_fk_new_face";
 external fk_load_glyph: (fk_face, int) => fk_return(fk_glyph) = "caml_fk_load_glyph";
+external fk_shape: (fk_face, string) => array(fk_shape) = "caml_fk_shape";
 
 let load = (fontFile, size) => {
     let face = fk_new_face(fontFile, size);

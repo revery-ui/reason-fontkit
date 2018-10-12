@@ -150,4 +150,41 @@ extern "C" {
 
         return Val_success(ret);
     }
+
+    static value createShapeTuple(unsigned int codepoint, unsigned int cluster) {
+        CAMLparam0();
+
+        CAMLlocal1(ret);
+        ret = caml_alloc(2, 0);
+        Store_field(ret, 0, Val_int(codepoint));
+        Store_field(ret, 1, Val_int(cluster));
+        CAMLreturn(ret);
+    }
+
+    CAMLprim value
+    caml_fk_shape(value vFace, value vString) {
+        CAMLparam2(vFace, vString);
+
+        FontKitFace *pFontKitFace = (FontKitFace *)vFace;
+        hb_font_t *hb_font = pFontKitFace->pHarfbuzzFace;
+
+        hb_buffer_t* hb_buffer;
+        hb_buffer = hb_buffer_create();
+        hb_buffer_add_utf8(hb_buffer, String_val(vString), -1, 0, -1);
+        hb_buffer_guess_segment_properties(hb_buffer);
+
+        hb_shape(hb_font, hb_buffer, NULL, 0);
+
+        unsigned int len = hb_buffer_get_length(hb_buffer);
+        hb_glyph_info_t *info = hb_buffer_get_glyph_infos(hb_buffer, NULL);
+
+        CAMLlocal1(ret);
+        ret = caml_alloc(len, 0);
+        for(int i = 0; i < len; i++) {
+            Store_field(ret, i, createShapeTuple(info[i].codepoint, info[i].cluster));
+        }
+
+        hb_buffer_destroy(hb_buffer);
+        CAMLreturn(ret);
+    }
 }

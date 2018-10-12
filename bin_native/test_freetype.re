@@ -3,6 +3,7 @@ open Reglfw.Glfw;
 
 open Refreetype;
 
+open FontKit;
 print_endline("Hello, world!");
 
 let loadShader = (shaderType, source) => {
@@ -40,9 +41,14 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  let font = FontKit.load("Roboto-Regular.ttf", 32);
+  let font = FontKit.load("E:/Lato-Regular.ttf", 32);
 
   let  image = FontKit.renderGlyph(font, 75);
+
+  let shapes = FontKit.fk_shape(font, "fihello world");
+    let f = (s: fk_shape) => print_endline("codepoint: " ++ string_of_int(s.codepoint) ++ " | " ++ "cluster: " ++ string_of_int(s.cluster));
+  Array.iter(f, shapes);
+
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
