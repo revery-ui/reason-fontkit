@@ -18,14 +18,16 @@ let get_os =
         | "Linux" -> Linux
         | _ -> Unknown
 
-let c_flags = ["-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH")]
+let c_flags = ["-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys.getenv "HARFBUZZ_INCLUDE_PATH")]
 
 let ccopt s = ["-ccopt"; s]
 
 let flags = []
     @ ccopt "-L."
     @ ccopt ("-L" ^ (Sys.getenv "FREETYPE2_LIB_PATH"))
+    @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
     @ ccopt ("-lfreetype")
+    @ ccopt ("-lharfbuzz")
 ;;
 
 let cxx_flags =

@@ -40,8 +40,9 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  let font = Font.load("Roboto.ttf", 32);
-  let character = Font.getGlyph(font, 'A');
+  let font = Font.load("Roboto-Regular.ttf", 32);
+
+  let character = Font.getGlyph(font, 'B');
 
   let vsSource = {|
         #ifndef GL_ES

@@ -50,14 +50,15 @@ let getCharacter = (face, character: char) => {
     | Error(msg) => raise(FreeTypeRenderCharacterException(msg))
     };
 
+print_endline("loading character");
     let image = ft_char_get_image(char);
-    let (bearingX, bearingY, advance) = ft_char_get_metrics(char);
+    /* let (bearingX, bearingY, advance) = ft_char_get_metrics(char); */
 
     let ret: character = {
         image,
-        bearingX,
-        bearingY,
-        advance
+        bearingX: 0,
+        bearingY: 0,
+        advance: 0,
     };
     ret;
 };
