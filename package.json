@@ -19,6 +19,7 @@
     "@opam/menhir": "20171013",
     "@opam/re": "1.8.0",
     "reason-glfw": "link:../reason-glfw",
+    "reason-gl-matrix": "link:../reason-gl-matrix",
     "esy-cmake": "github:bryphe/esy-cmake#5a40a8e",
     "esy-freetype2": "link:../esy-freetype2",
     "esy-harfbuzz": "github:bryphe/esy-harfbuzz#b9fcbe3"
@@ -28,6 +29,7 @@
     "@esy-ocaml/reason": "*",
     "refmterr": "*",
     "reason-glfw": "*",
+    "reason-gl-matrix":"*",
     "esy-cmake": "*",
     "esy-freetype2": "*",
     "esy-harfbuzz": "*"

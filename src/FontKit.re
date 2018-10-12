@@ -38,11 +38,7 @@ let load = (fontFile, size) => {
 let renderGlyph = (face, size) => {
     let glyph = fk_load_glyph(face, size);
     switch (glyph) {
-    | Success(g) => 
-        let {width, height, image, advance, _} = g;
-        
-        print_endline ("HEY!" ++ string_of_int(width) ++ string_of_int(height) ++ "|" ++ string_of_int(advance));
-        image;
+    | Success(g) => g
     | Error(msg) => raise(FontKitRenderGlyphException(msg))
 }
 };
