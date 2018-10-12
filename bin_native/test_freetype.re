@@ -41,7 +41,7 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  let font = FontKit.load("E:/Lato-Regular.ttf", 32);
+  let font = FontKit.load("E:/Lato-Regular.ttf", 64);
 
   /* let  image = FontKit.renderGlyph(font, 75); */
 
@@ -62,10 +62,9 @@ let run = () => {
         varying lowp vec2 vTexCoord;
 
         void main() {
-            /* vec4 pos = vec4(uPosition.x + (aTexCoord.x * uPosition.z), uPosition.y + (aTexCoord.y * uPosition.w), 0.0, 1.0); */
-            vec4 pos = vec4(100 * aTexCoord.x, 100 * aTexCoord.y, 0.0, 1.0);
+            vec4 pos = vec4(uPosition.x + (aTexCoord.x * uPosition.z), uPosition.y + (aTexCoord.y * uPosition.w), 0.1, 1.0);
             gl_Position = uProjection * pos;
-            /* gl_Position = vec4(1 * aTexCoord.x, 1 * (1 - aTexCoord.y), 0.0, 1.0); */
+            /* gl_Position = vec4(1 * aTexCoord.x, 1 * (aTexCoord.y), 0.0, 1.0); */
             vTexCoord = aTexCoord;
         }
     |};
@@ -82,7 +81,7 @@ let run = () => {
         void main() {
             /* gl_FragColor = vec4(vTexCoord.x, vTexCoord.y, 0.0, 1.0); */
             // gl_FragColor = vec4(vTexCoord, 0.0, 1.0);
-            vec4 color = texture2D(texture, vTexCoord);
+            vec4 color = texture2D(texture, vec2(vTexCoord.x, 1 - vTexCoord.y));
             /* gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); */
             gl_FragColor = vec4(0.0, 0.0, color.a, 1.0);
         }
@@ -91,10 +90,9 @@ let run = () => {
 
       let shaderProgram = initShaderProgram(vsSource, fsSource);
 
-      /* let posAttribute = glGetAttribLocation(shaderProgram, "aVertexPosition"); */
       let texAttribute = glGetAttribLocation(shaderProgram, "aTexCoord");
       let projectionUniform = glGetUniformLocation(shaderProgram, "uProjection");
-      let _positionUniform = glGetUniformLocation(shaderProgram, "uPosition");
+      let positionUniform = glGetUniformLocation(shaderProgram, "uPosition");
 
       let textureCoordinates = [|0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0|];
       let indices = [|0, 1, 2, 0, 2, 3|];
@@ -116,15 +114,15 @@ let run = () => {
 
       let glyph = FontKit.renderGlyph(font, s.codepoint);
     
-      let {image, _} = glyph;
+      let {image, width, height, _} = glyph;
         
 
 
       let projection = Mat4.create();
-      Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, 0.1, 100.0);
+      Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
 
-        print_endline("0, 0:" ++ string_of_float(Mat4.get(projection, 6)));
     glUniformMatrix4fv(projectionUniform, projection);
+    glUniform4f(positionUniform, 100.0, 100.0, float_of_int(width), float_of_int(height));
 
 
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -138,7 +136,6 @@ let run = () => {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, GL_UNSIGNED_BYTE, image);
 
-    /* glUniform4f(positionUniform, 1.0, 1.0, 30.0, 30.0); */
 
     glBindBuffer(GL_ARRAY_BUFFER, tb);
     glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false);
