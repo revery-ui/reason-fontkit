@@ -40,9 +40,19 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  let font = Font.load("Roboto-Regular.ttf", 32);
+  let font = FontKit.load("Roboto-Regular.ttf", 32);
 
-  let character = Font.getGlyph(font, 'B');
+  let  image = FontKit.renderGlyph(font, 75);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    let texture = glCreateTexture();
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, GL_UNSIGNED_BYTE, image);
 
   let vsSource = {|
         #ifndef GL_ES
@@ -109,7 +119,7 @@ let run = () => {
     glDepthFunc(GL_LEQUAL);
 
     glUseProgram(shaderProgram);
-    glBindTexture(GL_TEXTURE_2D, character.texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     glBindBuffer(GL_ARRAY_BUFFER, vb);
     glVertexAttribPointer(posAttribute, 2, GL_FLOAT, false);
