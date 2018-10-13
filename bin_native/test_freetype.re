@@ -72,7 +72,7 @@ let run = () => {
         void main() {
             /* gl_FragColor = vec4(vTexCoord.x, vTexCoord.y, 0.0, 1.0); */
             // gl_FragColor = vec4(vTexCoord, 0.0, 1.0);
-            vec4 color = texture2D(texture, vec2(vTexCoord.x, 1 - vTexCoord.y));
+            vec4 color = texture2D(texture, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
             /* gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); */
             gl_FragColor = vec4(0.0, 0.0, color.a, 1.0);
         }

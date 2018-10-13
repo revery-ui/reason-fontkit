@@ -28,6 +28,9 @@ let flags = []
     @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
     @ ccopt ("-lfreetype")
     @ ccopt ("-lharfbuzz")
+    @ ccopt ("-lbz2")
+    @ ccopt ("-lpng")
+    @ ccopt ("-lz")
 ;;
 
 let cxx_flags =
