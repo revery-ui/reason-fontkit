@@ -3,7 +3,7 @@ open Reglfw.Glfw;
 open Reglm;
 open Refreetype;
 
-open FontKit;
+open Fontkit;
 print_endline("Hello, world!");
 
 let loadShader = (shaderType, source) => {
@@ -38,7 +38,7 @@ let run = () => {
   glfwMakeContextCurrent(w);
   glViewport(0, 0, 800, 600);
 
-  let font = FontKit.load("E:/FiraCode-Regular.ttf", 24);
+  let font = Fontkit.load("Roboto-Regular.ttf", 24);
 
   let vsSource = {|
         #ifndef GL_ES
@@ -102,8 +102,8 @@ let run = () => {
   let projection = Mat4.create();
   Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
 
-  let render = (s: FontKit.fk_shape, x: float, y: float) => {
-    let glyph = FontKit.renderGlyph(font, s.codepoint);
+  let render = (s: Fontkit.fk_shape, x: float, y: float) => {
+    let glyph = Fontkit.renderGlyph(font, s.codepoint);
 
     let {image, width, height, bearingX, bearingY, advance, _} = glyph;
 
@@ -138,7 +138,7 @@ let run = () => {
   };
 
   let renderString = (str: string, x: float, y: float) => {
-    let shapes = FontKit.fk_shape(font, str);
+    let shapes = Fontkit.fk_shape(font, str);
     let startX = ref(x);
     Array.iter(
       s => {
