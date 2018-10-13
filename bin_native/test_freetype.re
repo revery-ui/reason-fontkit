@@ -41,13 +41,7 @@ let run = () => {
   let%lwt image = Image.load("image4.jpg");
   Image.debug_print(image);
 
-  /* let font = FontKit.load("E:/Lato-Regular.ttf", 64); */
-
-  /* let  image = FontKit.renderGlyph(font, 75); */
-
-/*   let shapes = FontKit.fk_shape(font, "fi hello=>world fi"); */
-/*     let f = (s: fk_shape) => print_endline("codepoint: " ++ string_of_int(s.codepoint) ++ " | " ++ "cluster: " ++ string_of_int(s.cluster)); */
-/*   Array.iter(f, shapes); */
+  let font = FontKit.load("E:/FiraCode-Regular.ttf", 24);
 
   let vsSource = {|
         #ifndef GL_ES
@@ -112,63 +106,62 @@ let run = () => {
       let projection = Mat4.create();
       Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
 
-   /* let _render = (s: FontKit.fk_shape, x: float, y: float) => { */
+   let render = (s: FontKit.fk_shape, x: float, y: float) => {
 
-   /*      print_endline("start glyph"); */
-   /*    let glyph = FontKit.renderGlyph(font, s.codepoint); */
-   /*  print_endline("end glyph"); */
+        print_endline("start glyph");
+      let glyph = FontKit.renderGlyph(font, s.codepoint);
+    print_endline("end glyph");
     
-   /*    let {image, width, height, bearingX, bearingY, advance, _} = glyph; */
+      let {image, width, height, bearingX, bearingY, advance, _} = glyph;
         
 
 
-   /*  glUniformMatrix4fv(projectionUniform, projection); */
-   /*  glUniform4f(positionUniform, x +. float_of_int(bearingX), y -. (float_of_int(height) -. float_of_int(bearingY)), float_of_int(width), float_of_int(height)); */
+    glUniformMatrix4fv(projectionUniform, projection);
+    glUniform4f(positionUniform, x +. float_of_int(bearingX), y -. (float_of_int(height) -. float_of_int(bearingY)), float_of_int(width), float_of_int(height));
 
 
-   /*      glPixelStorei(GL_PACK_ALIGNMENT, 1); */
-   /*      glPixelStorei(GL_UNPACK_ALIGNMENT, 1); */
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-   /*      let texture = glCreateTexture(); */
-   /*      glBindTexture(GL_TEXTURE_2D, texture); */
-   /*      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); */
-   /*      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); */
-   /*      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); */
-   /*      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); */
-   /*      glTexImage2D(GL_TEXTURE_2D, GL_UNSIGNED_BYTE, image); */
+        let texture = glCreateTexture();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, GL_UNSIGNED_BYTE, image);
 
 
-   /*  glBindBuffer(GL_ARRAY_BUFFER, tb); */
-   /*  glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false); */
-   /*  glEnableVertexAttribArray(texAttribute); */
+    glBindBuffer(GL_ARRAY_BUFFER, tb);
+    glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false);
+    glEnableVertexAttribArray(texAttribute);
 
-   /*  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib); */
-   /*  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0); */
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-   /*      x +. (float_of_int(advance) /. 64.0); */
-   /* }; */
+        x +. (float_of_int(advance) /. 64.0);
+   };
 
-   let _renderString = (str: string, _x: float, _y: float) => {
-print_endline("start fk_shape");
-        let _shapes = FontKit.fk_shape(font, str);
-print_endline("end fk_shape");
-        /* let startX = ref(x); */
-        /* Array.iter((s) => { */
-        /*         let nextPosition = render(s, startX^, y) */
-        /*         startX := nextPosition; */
-        /* }, shapes); */
+   let renderString = (str: string, x: float, y: float) => {
+        let shapes = FontKit.fk_shape(font, str);
+        let startX = ref(x);
+        Array.iter((s) => {
+                let nextPosition = render(s, startX^, y)
+                startX := nextPosition;
+        }, shapes);
    }
 
 
   glfwRenderLoop((_t) => {
-    glClearColor(1.0, 0., 0., 1.);
+    glClearColor(0.0, 0., 0., 1.);
     glClearDepth(1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
     glUseProgram(shaderProgram);
 
-    /* renderString("fi hello=>world fi", 100., 100.); */
+    renderString(string_of_float(Unix.gettimeofday()), 0.0, 500.0);
+    renderString("pfi hello=>world !== fiq", 100., 100.);
 
     Gc.full_major();
 

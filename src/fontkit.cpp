@@ -79,6 +79,7 @@ extern "C" {
     CAMLprim value
     caml_fk_new_face(value vString, value vInt)  {
         CAMLparam2(vString, vInt);
+        CAMLlocal1(ret);
 
         if (!_fHasInitedLibrary) {
             if(FT_Init_FreeType(&_ftLibrary)) {
@@ -96,25 +97,26 @@ extern "C" {
         FT_Face *face = (FT_Face *)malloc(sizeof(FT_Face));
 
         if (FT_New_Face(ft, szFont, 0, face)) {
-            return Val_error("[ERROR]: Unable to load font at FT_New_Face\n");
+            ret = Val_error("[ERROR]: Unable to load font at FT_New_Face\n");
+        } else {
+            FT_Set_Pixel_Sizes(*face, 0, iSize);
+
+            hb_font_t *hb_font;
+            hb_font = get_font_ot(szFont, iSize * 64);
+
+            FontKitFace* pFontKitFace = (FontKitFace *)malloc(sizeof(FontKitFace));
+            pFontKitFace->pFreeTypeFace = face;
+            pFontKitFace->pHarfbuzzFace = hb_font;
+
+            ret = Val_success((value)pFontKitFace);
         }
-
-        FT_Set_Pixel_Sizes(*face, 0, iSize);
-
-        hb_font_t *hb_font;
-        hb_font = get_font_ot(szFont, iSize * 64);
-
-        FontKitFace* pFontKitFace = (FontKitFace *)malloc(sizeof(FontKitFace));
-        pFontKitFace->pFreeTypeFace = face;
-        pFontKitFace->pHarfbuzzFace = hb_font;
-
-        return Val_success((value)pFontKitFace);
+        CAMLreturn(ret);
     }
 
     CAMLprim value
     caml_fk_load_glyph(value vFace, value vGlyphId) {
         CAMLparam2(vFace, vGlyphId);
-        CAMLlocal1(ret);
+        CAMLlocal2(ret, record);
 
         FontKitFace *pFontKitFace = (FontKitFace *)vFace;
         long glyphId = Int_val(vGlyphId);
@@ -122,36 +124,33 @@ extern "C" {
         FT_Face face = *(pFontKitFace->pFreeTypeFace);
 
         if (FT_Load_Glyph(face, glyphId, FT_LOAD_RENDER)) {
-            return Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
+            ret = Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
+        } else {
+            ReglfwImageInfo *p = (ReglfwImageInfo *)malloc(sizeof(ReglfwImageInfo));
+            p->numChannels = 1;
+            p->channelSize = 1;
+            p->width = face->glyph->bitmap.width;
+            p->height = face->glyph->bitmap.rows;
+
+            unsigned char *originalBuffer = face->glyph->bitmap.buffer;
+
+            int size = face->glyph->bitmap.width * face->glyph->bitmap.rows;
+            unsigned char* data = (unsigned char *)malloc(size);
+            memcpy(data, originalBuffer, size);
+
+            p->data = data;
+
+            record = caml_alloc(6, 0);
+            Store_field(record, 0, Val_int(p->width));
+            Store_field(record, 1, Val_int(p->height));
+            Store_field(record, 2, Val_int(face->glyph->bitmap_left));
+            Store_field(record, 3, Val_int(face->glyph->bitmap_top));
+            Store_field(record, 4, Val_int(face->glyph->advance.x));
+            Store_field(record, 5, (value)p);
+
+            ret = Val_success(record);
         }
-
-        ReglfwImageInfo *p = (ReglfwImageInfo *)malloc(sizeof(ReglfwImageInfo));
-        p->numChannels = 1;
-        p->channelSize = 1;
-        p->width = face->glyph->bitmap.width;
-        p->height = face->glyph->bitmap.rows;
-
-        unsigned char *originalBuffer = face->glyph->bitmap.buffer;
-
-        int size = face->glyph->bitmap.width * face->glyph->bitmap.rows;
-        unsigned char* data = (unsigned char *)malloc(size);
-        memcpy(data, originalBuffer, size);
-
-        p->data = data;
-
-        printf(" - 1\n");
-
-        ret = caml_alloc(6, 0);
-        printf(" - 1.1\n");
-        Store_field(ret, 0, Val_int(p->width));
-        Store_field(ret, 1, Val_int(p->height));
-        Store_field(ret, 2, Val_int(face->glyph->bitmap_left));
-        Store_field(ret, 3, Val_int(face->glyph->bitmap_top));
-        Store_field(ret, 4, Val_int(face->glyph->advance.x));
-        Store_field(ret, 5, (value)p);
-        printf(" - 2\n");
-
-        return Val_success(ret);
+        CAMLreturn(ret);
     }
 
     static value createShapeTuple(unsigned int codepoint, unsigned int cluster) {
@@ -169,8 +168,6 @@ extern "C" {
         CAMLparam2(vFace, vString);
         CAMLlocal1(ret);
 
-        printf(" - 1\n");
-
         FontKitFace *pFontKitFace = (FontKitFace *)vFace;
         hb_font_t *hb_font = pFontKitFace->pHarfbuzzFace;
 
@@ -181,21 +178,14 @@ extern "C" {
 
         hb_shape(hb_font, hb_buffer, NULL, 0);
 
-        printf(" - 2\n");
         unsigned int len = hb_buffer_get_length(hb_buffer);
         hb_glyph_info_t *info = hb_buffer_get_glyph_infos(hb_buffer, NULL);
-        printf(" - 2.5\n");
 
-        printf(" - 2.5.1\n");
         ret = caml_alloc(len, 0);
-        printf(" - 2.5.2\n");
         for(int i = 0; i < len; i++) {
-        printf(" - 2.5.2::%d\n", i);
             Store_field(ret, i, createShapeTuple(info[i].codepoint, info[i].cluster));
         }
-        printf(" - 3\n");
         hb_buffer_destroy(hb_buffer);
-        printf(" - 4\n");
         CAMLreturn(ret);
     }
 }
