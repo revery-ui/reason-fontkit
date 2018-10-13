@@ -49,7 +49,6 @@ extern "C" {
         CAMLlocal1(error);
         error = caml_alloc(1, 1);
         Store_field(error, 0, caml_copy_string(szMsg));
-        return error;
         CAMLreturn(error);
     }
 
@@ -115,6 +114,7 @@ extern "C" {
     CAMLprim value
     caml_fk_load_glyph(value vFace, value vGlyphId) {
         CAMLparam2(vFace, vGlyphId);
+        CAMLlocal1(ret);
 
         FontKitFace *pFontKitFace = (FontKitFace *)vFace;
         long glyphId = Int_val(vGlyphId);
@@ -139,14 +139,17 @@ extern "C" {
 
         p->data = data;
 
-        CAMLlocal1(ret);
+        printf(" - 1\n");
+
         ret = caml_alloc(6, 0);
+        printf(" - 1.1\n");
         Store_field(ret, 0, Val_int(p->width));
         Store_field(ret, 1, Val_int(p->height));
         Store_field(ret, 2, Val_int(face->glyph->bitmap_left));
         Store_field(ret, 3, Val_int(face->glyph->bitmap_top));
         Store_field(ret, 4, Val_int(face->glyph->advance.x));
         Store_field(ret, 5, (value)p);
+        printf(" - 2\n");
 
         return Val_success(ret);
     }
@@ -164,6 +167,9 @@ extern "C" {
     CAMLprim value
     caml_fk_shape(value vFace, value vString) {
         CAMLparam2(vFace, vString);
+        CAMLlocal1(ret);
+
+        printf(" - 1\n");
 
         FontKitFace *pFontKitFace = (FontKitFace *)vFace;
         hb_font_t *hb_font = pFontKitFace->pHarfbuzzFace;
@@ -175,16 +181,21 @@ extern "C" {
 
         hb_shape(hb_font, hb_buffer, NULL, 0);
 
+        printf(" - 2\n");
         unsigned int len = hb_buffer_get_length(hb_buffer);
         hb_glyph_info_t *info = hb_buffer_get_glyph_infos(hb_buffer, NULL);
+        printf(" - 2.5\n");
 
-        CAMLlocal1(ret);
+        printf(" - 2.5.1\n");
         ret = caml_alloc(len, 0);
+        printf(" - 2.5.2\n");
         for(int i = 0; i < len; i++) {
+        printf(" - 2.5.2::%d\n", i);
             Store_field(ret, i, createShapeTuple(info[i].codepoint, info[i].cluster));
         }
-
+        printf(" - 3\n");
         hb_buffer_destroy(hb_buffer);
+        printf(" - 4\n");
         CAMLreturn(ret);
     }
 }
