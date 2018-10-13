@@ -18,10 +18,10 @@
   "resolutions": {
     "@opam/menhir": "20171013",
     "@opam/re": "1.8.0",
-    "reason-glfw": "link:../reason-glfw",
-    "reason-gl-matrix": "link:../reason-gl-matrix",
+    "reason-glfw": "github:bryphe/reason-glfw#3121eba",
+    "reason-gl-matrix": "github:bryphe/reason-gl-matrix",
     "esy-cmake": "github:bryphe/esy-cmake#5a40a8e",
-    "esy-freetype2": "link:../esy-freetype2",
+    "esy-freetype2": "github:bryphe/esy-freetype2#16c01f8",
     "esy-harfbuzz": "github:bryphe/esy-harfbuzz#b9fcbe3"
   },
   "dependencies": {
