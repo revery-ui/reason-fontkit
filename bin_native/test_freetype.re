@@ -38,9 +38,6 @@ let run = () => {
   glfwMakeContextCurrent(w);
   glViewport(0, 0, 800, 600);
 
-  let%lwt image = Image.load("image4.jpg");
-  Image.debug_print(image);
-
   let font = FontKit.load("E:/FiraCode-Regular.ttf", 24);
 
   let vsSource = {|
@@ -106,9 +103,7 @@ let run = () => {
   Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
 
   let render = (s: FontKit.fk_shape, x: float, y: float) => {
-    print_endline("start glyph");
     let glyph = FontKit.renderGlyph(font, s.codepoint);
-    print_endline("end glyph");
 
     let {image, width, height, bearingX, bearingY, advance, _} = glyph;
 
