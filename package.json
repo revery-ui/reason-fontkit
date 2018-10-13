@@ -19,7 +19,7 @@
     "@opam/menhir": "20171013",
     "@opam/re": "1.8.0",
     "reason-glfw": "github:bryphe/reason-glfw#3121eba",
-    "reason-gl-matrix": "github:bryphe/reason-gl-matrix",
+    "reason-gl-matrix": "github:bryphe/reason-gl-matrix#0ae52c1",
     "esy-cmake": "github:bryphe/esy-cmake#5a40a8e",
     "esy-freetype2": "github:bryphe/esy-freetype2#16c01f8",
     "esy-harfbuzz": "github:bryphe/esy-harfbuzz#b9fcbe3"
