@@ -22,15 +22,21 @@ let c_flags = ["-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys.getenv "
 
 let ccopt s = ["-ccopt"; s]
 
+let extraFlags = 
+    match get_os with
+    | Windows -> []
+    | _ -> []
+    @ ccopt ("-lbz2")
+    @ ccopt ("-lpng")
+    @ ccopt ("-lz")
+
 let flags = []
     @ ccopt "-L."
     @ ccopt ("-L" ^ (Sys.getenv "FREETYPE2_LIB_PATH"))
     @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
     @ ccopt ("-lfreetype")
     @ ccopt ("-lharfbuzz")
-    @ ccopt ("-lbz2")
-    @ ccopt ("-lpng")
-    @ ccopt ("-lz")
+    @ extraFlags
 ;;
 
 let cxx_flags =
