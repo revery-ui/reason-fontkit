@@ -1,6 +1,6 @@
 (library
-    (name refreetype)
-    (public_name refreetype)
+    (name fontkit)
+    (public_name fontkit)
     (cxx_names fontkit)
     (library_flags (:include flags.sexp))
     (c_flags (:include c_flags.sexp))

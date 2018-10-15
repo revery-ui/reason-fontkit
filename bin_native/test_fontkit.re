@@ -1,9 +1,8 @@
 open Reglfw;
 open Reglfw.Glfw;
 open Reglm;
-open Refreetype;
-
 open Fontkit;
+
 print_endline("Hello, world!");
 
 let loadShader = (shaderType, source) => {

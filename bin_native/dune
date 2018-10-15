@@ -1,13 +1,13 @@
 (executable
-    (name test_freetype)
+    (name test_fontkit)
     (preprocess (pps lwt_ppx))
-    (public_name test_freetype)
+    (public_name test_fontkit)
     (libraries
         bigarray
         lwt
         lwt.unix
         reglfw
-        refreetype
+        fontkit
             ))
 
 (install
