@@ -27,6 +27,8 @@ let extraFlags =
     match get_os with
     | Windows -> []
     | _ -> []
+    @ ccopt ("-L/usr/lib")
+    @ ccopt ("-L/usr/local/lib")
     @ cclib ("-lbz2")
     @ cclib ("-lpng")
     @ cclib ("-lz")
@@ -35,9 +37,9 @@ let flags = []
     @ ccopt "-L."
     @ ccopt ("-L" ^ (Sys.getenv "FREETYPE2_LIB_PATH"))
     @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
-    @ extraFlags
     @ cclib ("-lfreetype")
     @ cclib ("-lharfbuzz")
+    @ extraFlags
 ;;
 
 let cxx_flags =
