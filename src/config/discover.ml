@@ -34,9 +34,9 @@ let flags = []
     @ ccopt "-L."
     @ ccopt ("-L" ^ (Sys.getenv "FREETYPE2_LIB_PATH"))
     @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
+    @ extraFlags
     @ ccopt ("-lfreetype")
     @ ccopt ("-lharfbuzz")
-    @ extraFlags
 ;;
 
 let cxx_flags =
