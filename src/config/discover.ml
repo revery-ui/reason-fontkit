@@ -18,14 +18,28 @@ let get_os =
         | "Linux" -> Linux
         | _ -> Unknown
 
-let c_flags = ["-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH")]
+let c_flags = ["-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys.getenv "HARFBUZZ_INCLUDE_PATH")]
 
 let ccopt s = ["-ccopt"; s]
+let cclib s = ["-cclib"; s]
+
+let extraFlags = 
+    match get_os with
+    | Windows -> []
+    | _ -> []
+    @ ccopt ("-L/usr/lib")
+    @ ccopt ("-L/usr/local/lib")
+    @ cclib ("-lbz2")
+    @ cclib ("-lpng")
+    @ cclib ("-lz")
 
 let flags = []
     @ ccopt "-L."
     @ ccopt ("-L" ^ (Sys.getenv "FREETYPE2_LIB_PATH"))
-    @ ccopt ("-lfreetype")
+    @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
+    @ cclib ("-lfreetype")
+    @ cclib ("-lharfbuzz")
+    @ extraFlags
 ;;
 
 let cxx_flags =
