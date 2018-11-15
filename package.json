@@ -16,7 +16,7 @@
     "ocaml": "~4.6.0"
   },
   "resolutions": {
-    "esy-harfbuzz": "github:bryphe/esy-harfbuzz#b9fcbe3"
+    "reason-glfw": "github:bryphe/reason-glfw#df48c80"
   },
   "dependencies": {
     "@opam/dune": "*",
@@ -26,7 +26,7 @@
     "reason-gl-matrix":"^0.2.0",
     "esy-cmake": "^0.3.2",
     "esy-freetype2": "^2.9.1001",
-    "esy-harfbuzz": "*"
+    "esy-harfbuzz": "^1.9.1"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"
