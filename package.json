@@ -15,24 +15,15 @@
   "peerDependencies": {
     "ocaml": "~4.6.0"
   },
-  "resolutions": {
-    "@opam/menhir": "20171013",
-    "@opam/re": "1.8.0",
-    "reason-glfw": "github:bryphe/reason-glfw#3121eba",
-    "reason-gl-matrix": "github:bryphe/reason-gl-matrix#0ae52c1",
-    "esy-cmake": "github:bryphe/esy-cmake#5a40a8e",
-    "esy-freetype2": "github:bryphe/esy-freetype2#bdce79aa3",
-    "esy-harfbuzz": "github:bryphe/esy-harfbuzz#b9fcbe3"
-  },
   "dependencies": {
     "@opam/dune": "*",
-    "@esy-ocaml/reason": "*",
-    "refmterr": "*",
-    "reason-glfw": "*",
-    "reason-gl-matrix":"*",
-    "esy-cmake": "*",
-    "esy-freetype2": "*",
-    "esy-harfbuzz": "*"
+    "@esy-ocaml/reason": "^3.3.7",
+    "refmterr": "^3.1.0",
+    "reason-glfw": "^1.0.0",
+    "reason-gl-matrix":"^0.2.0",
+    "esy-cmake": "^0.3.2",
+    "esy-freetype2": "^2.9.1001",
+    "esy-harfbuzz": "^1.9.1"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"
