@@ -1,7 +1,7 @@
 {
-  "name": "reason-freetype2",
-  "version": "0.1.0",
-  "description": "Freetype2 bindings for Reason / OCaml",
+  "name": "reason-fontkit",
+  "version": "1.0.0",
+  "description": "Fontkit-like API for OCaml/Reason",
   "license": "MIT",
   "esy": {
     "build": [
