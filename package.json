@@ -16,8 +16,6 @@
     "ocaml": "~4.6.0"
   },
   "resolutions": {
-    "esy-cmake": "github:bryphe/esy-cmake#5a40a8e",
-    "esy-freetype2": "github:bryphe/esy-freetype2#bdce79aa3",
     "esy-harfbuzz": "github:bryphe/esy-harfbuzz#b9fcbe3"
   },
   "dependencies": {
@@ -26,8 +24,8 @@
     "refmterr": "^3.1.0",
     "reason-glfw": "*",
     "reason-gl-matrix":"^0.2.0",
-    "esy-cmake": "*",
-    "esy-freetype2": "*",
+    "esy-cmake": "^0.3.2",
+    "esy-freetype2": "^2.9.1001",
     "esy-harfbuzz": "*"
   },
   "devDependencies": {
