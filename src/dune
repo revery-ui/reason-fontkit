@@ -1,6 +1,7 @@
 (library
     (name fontkit)
     (public_name fontkit)
+    (js_of_ocaml (javascript_files fontkit.js))
     (cxx_names fontkit)
     (library_flags (:include flags.sexp))
     (c_flags (:include c_flags.sexp))
