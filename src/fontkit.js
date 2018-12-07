@@ -15,13 +15,17 @@ function caml_fk_new_face(fontName /*: string */, size /*: number */) {
 // Requires: caml_new_string
 function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
   console.log(face);
+  var img = new Image();
+  img.src =
+    "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
   return createSuccessValue([
+    /* <empty> */ 0,
     /* width */ face[0],
     /* height */ face[0],
     /* bearingX */ 0,
     /* bearingY */ 0,
     /* advance */ 0,
-    /* image */ caml_new_string("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=")
+    /* image */ img
   ]);
 }
 
@@ -31,6 +35,6 @@ function caml_fk_shape(face /*: fk_face */, text /*: string */) {
   // Instead of relying on internal representation
   var str = text.c;
   return str.split("").map(function mapper(_char) {
-    return [0, 0];
+    return [/* codepoint */ 0, /* cluster */ 0];
   });
 }
