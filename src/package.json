@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "bundle": "browserify --standalone Fontkit ./fontkit-lib.js -o ./fontkit-lib.compiled.js"
+  },
+  "devDependencies": {
+    "babelify": "^7.3.0",
+    "browserify": "^14.3.0",
+    "fontkit": "^1.7.7"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  }
+}

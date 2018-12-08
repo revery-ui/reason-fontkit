@@ -6,15 +6,16 @@ function createSuccessValue(value) {
 
 // Provides: caml_fk_new_face
 function caml_fk_new_face(fontName /*: string */, size /*: number */) {
-  console.log(size);
-  // var jsName = fontName.c;
+  // var t = joo_global_object.Fontkit.openSync(fontName.c);
+  // var font = await fetch(fontName.c);
+  console.log(fontName.c);
   return createSuccessValue([size]);
 }
 
 // Provides: caml_fk_load_glyph
 // Requires: caml_new_string
 function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
-  console.log(face);
+  console.log(Fontkit);
   var img = new Image();
   img.src =
     "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
