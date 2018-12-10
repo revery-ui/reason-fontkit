@@ -1,15 +1,39 @@
-// Important: The value `0` of the Success tag correspond to the ordering in
-// which fk_return variants are declared in the type declaration
 function createSuccessValue(value) {
+  // Important: The value `0` of the Success tag correspond to the ordering in
+  // which fk_return variants are declared in the type declaration
   return [0, value];
 }
 
 // Provides: caml_fk_new_face
-function caml_fk_new_face(fontName /*: string */, size /*: number */) {
-  // var t = joo_global_object.Fontkit.openSync(fontName.c);
-  // var font = await fetch(fontName.c);
-  console.log(fontName.c);
-  return createSuccessValue([size]);
+function caml_fk_new_face(
+  fontName /*: string */,
+  size /*: number */,
+  successCallback /*: face => void */,
+  failureCallback /*: string => void */
+) {
+  fetch(fontName.c)
+    .then(function toBlob(res) {
+      return res.blob();
+    })
+    .then(function toBuffer(blob) {
+      return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        function onLoadEnd(e) {
+          reader.removeEventListener("loadend", onLoadEnd, false);
+          if (e.error) reject(e.error);
+          else resolve(joo_global_object.Buffer.from(reader.result));
+        }
+        reader.addEventListener("loadend", onLoadEnd, false);
+        reader.readAsArrayBuffer(blob);
+      });
+    })
+    .then(function loadFont(buffer) {
+      successCallback(joo_global_object.Fontkit.create(buffer));
+    })
+    .catch(function onError(error) {
+      failureCallback(error.message);
+    });
+  return undefined;
 }
 
 // Provides: caml_fk_load_glyph

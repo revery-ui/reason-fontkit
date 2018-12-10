@@ -37,7 +37,7 @@ let run = () => {
   glfwMakeContextCurrent(w);
   glViewport(0, 0, 800, 600);
 
-  let font = Fontkit.load("Roboto-Regular.ttf", 24);
+  let%lwt font = Fontkit.load("Roboto-Regular.ttf", 24);
 
   let vsSource = {|
         #ifndef GL_ES

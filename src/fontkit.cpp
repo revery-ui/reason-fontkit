@@ -3,6 +3,7 @@
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <caml/alloc.h>
+#include <caml/callback.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -77,13 +78,14 @@ extern "C" {
     }
 
     CAMLprim value
-    caml_fk_new_face(value vString, value vInt)  {
-        CAMLparam2(vString, vInt);
+    caml_fk_new_face(value vString, value vInt, value vSuccess, value vFailure)  {
+        CAMLparam4(vString, vInt, vSuccess, vFailure);
         CAMLlocal1(ret);
 
         if (!_fHasInitedLibrary) {
             if(FT_Init_FreeType(&_ftLibrary)) {
-                return Val_error("[ERROR]: Initializing freetype library failed\n");
+                caml_callback(vFailure, caml_copy_string("[ERROR]: Initializing freetype library failed\n"));
+                CAMLreturn(Val_unit);
             }
             _fHasInitedLibrary = true;
         }
@@ -97,7 +99,7 @@ extern "C" {
         FT_Face *face = (FT_Face *)malloc(sizeof(FT_Face));
 
         if (FT_New_Face(ft, szFont, 0, face)) {
-            ret = Val_error("[ERROR]: Unable to load font at FT_New_Face\n");
+            caml_callback(vFailure, caml_copy_string("[ERROR]: Unable to load font at FT_New_Face\n"));
         } else {
             FT_Set_Pixel_Sizes(*face, 0, iSize);
 
@@ -108,9 +110,9 @@ extern "C" {
             pFontKitFace->pFreeTypeFace = face;
             pFontKitFace->pHarfbuzzFace = hb_font;
 
-            ret = Val_success((value)pFontKitFace);
+            caml_callback(vSuccess, (value)pFontKitFace);
         }
-        CAMLreturn(ret);
+        CAMLreturn(Val_unit);
     }
 
     CAMLprim value
