@@ -102,7 +102,7 @@ let run = () => {
   Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
 
   let render = (s: Fontkit.fk_shape, x: float, y: float) => {
-    let glyph = Fontkit.renderGlyph(font, s.codepoint);
+    let glyph = Fontkit.renderGlyph(font, s.glyphId);
 
     let {image, width, height, bearingX, bearingY, advance, _} = glyph;
 

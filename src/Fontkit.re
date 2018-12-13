@@ -21,7 +21,7 @@ image: Image.t
 };
 
 type fk_shape = {
-    codepoint: int,
+    glyphId: int,
     cluster: int
 };
 

@@ -44,34 +44,46 @@ function caml_fk_new_face(
 }
 
 // Provides: caml_fk_load_glyph
-// Requires: caml_new_string
-function caml_fk_load_glyph(face /*: fk_face */, codePoint /*: number */) {
-  var retImg;
+function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
   var isDummy = isDummyFont(face);
+  // `texImage2D` allows for the texture pixels to be passed as image, canvas or other formats:
+  // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
   if (!isDummy) {
-    var glyph = face.getGlyph(codePoint);
+    var glyph = face.getGlyph(glyphId);
     // TODO: Can we reuse the same canvas element?
     var canvas = document.createElement("canvas");
     canvas.width = 24; // TODO: sizes
     canvas.height = 24; // TODO: sizes
     var ctx = canvas.getContext("2d");
+    ctx.translate(0, 24);
+    ctx.scale(1, -1);
+    ctx.save();
+    ctx.beginPath();
     glyph.render(ctx, 24); // TODO: sizes
-    retImg = canvas;
+    ctx.restore();
+    return createSuccessValue([
+      /* <jsoo_empty> */ 0,
+      /* width */ 24, // TODO: sizes
+      /* height */ 24, // TODO: sizes
+      /* bearingX */ 0,
+      /* bearingY */ 0,
+      /* advance */ glyph.advanceWidth,
+      /* image */ canvas
+    ]);
   } else {
     var img = new Image();
     img.src =
       "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
-    retImg = img;
+    return createSuccessValue([
+      /* <jsoo_empty> */ 0,
+      /* width */ face[1],
+      /* height */ face[1],
+      /* bearingX */ 0,
+      /* bearingY */ 0,
+      /* advance */ 10,
+      /* image */ img
+    ]);
   }
-  return createSuccessValue([
-    /* <jsoo_empty> */ 0,
-    /* width */ isDummy ? face[1] : 24,
-    /* height */ isDummy ? face[1] : 24,
-    /* bearingX */ 0,
-    /* bearingY */ 0,
-    /* advance */ 0,
-    /* image */ retImg
-  ]);
 }
 
 // Provides: caml_fk_shape
@@ -83,17 +95,15 @@ function caml_fk_shape(face /*: fk_face */, text /*: string */) {
   var ret;
   if (isDummy) {
     ret = str.split("").map(function mapper(_char) {
-      return [/* <jsoo_empty> */ 0, /* codepoint */ 0, /* cluster */ 0];
+      return [/* <jsoo_empty> */ 0, /* glyphId */ 0, /* cluster */ 0];
     });
   } else {
     var glyphs = face.glyphsForString(str);
     ret = glyphs.map(function mapper(_glyph) {
-      // TODO: What about glyphs with multiple codepoints?
-      // TODO: What is "cluster"?
       return [
         /* <jsoo_empty> */ 0,
-        /* codepoint */ _glyph.codePoints[0],
-        /* cluster */ 0
+        /* glyphId */ _glyph.id,
+        /* cluster */ 0 // TODO: What is "cluster"?
       ];
     });
   }
