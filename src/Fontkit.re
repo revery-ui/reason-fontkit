@@ -11,7 +11,6 @@ type fk_face;
 type successCallback = fk_face => unit;
 type failureCallback = string => unit;
 
-
 type fk_glyph = {
 width: int,
 height: int,
@@ -29,6 +28,9 @@ type fk_shape = {
 external fk_new_face: (string, int, successCallback, failureCallback) => unit = "caml_fk_new_face";
 external fk_load_glyph: (fk_face, int) => fk_return(fk_glyph) = "caml_fk_load_glyph";
 external fk_shape: (fk_face, string) => array(fk_shape) = "caml_fk_shape";
+external fk_dummy_font: int => fk_face = "caml_fk_dummy_font";
+
+let dummyFont = fk_dummy_font;
 
 let load = (fontFile, size) => {
   let (promise, resolver) = Lwt.task();
@@ -41,8 +43,8 @@ let load = (fontFile, size) => {
   promise;
 };
 
-let renderGlyph = (face, size) => {
-    let glyph = fk_load_glyph(face, size);
+let renderGlyph = (face, glyphId) => {
+    let glyph = fk_load_glyph(face, glyphId);
     switch (glyph) {
     | Success(g) => g
     | Error(msg) => raise(FontKitRenderGlyphException(msg))

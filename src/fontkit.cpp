@@ -190,4 +190,12 @@ extern "C" {
         hb_buffer_destroy(hb_buffer);
         CAMLreturn(ret);
     }
+
+    CAMLprim value
+    caml_fk_dummy_font() {
+        CAMLparam0();
+        CAMLlocal1(ret);
+        ret = caml_alloc(4, 0);
+        CAMLreturn(ret);
+    }
 }
