@@ -55,9 +55,22 @@ function caml_fk_new_face(
 // Requires: isDummyFont, createSuccessValue
 function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
   var isDummy = isDummyFont(face);
-  // `texImage2D` allows for the texture pixels to be passed as image, canvas or other formats:
+  // `texImage2D` allows for the texture pixels to be passed as image, canvas or other elements:
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
-  if (!isDummy) {
+  if (isDummy) {
+    var img = new joo_global_object.Image();
+    img.src =
+      "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
+    return createSuccessValue([
+      /* <jsoo_empty> */ 0,
+      /* width */ face[1],
+      /* height */ face[1],
+      /* bearingX */ 0,
+      /* bearingY */ 0,
+      /* advance */ 0,
+      /* image */ img
+    ]);
+  } else {
     var glyph = face.getGlyph(glyphId);
     // TODO: Can we reuse the same canvas element?
     var canvas = document.createElement("canvas");
@@ -75,19 +88,6 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
       /* bearingY */ 0, // glyph._metrics.topBearing breaks rendering
       /* advance */ glyph.advanceWidth,
       /* image */ canvas
-    ]);
-  } else {
-    var img = new joo_global_object.Image();
-    img.src =
-      "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
-    return createSuccessValue([
-      /* <jsoo_empty> */ 0,
-      /* width */ face[1],
-      /* height */ face[1],
-      /* bearingX */ 0,
-      /* bearingY */ 0,
-      /* advance */ 10,
-      /* image */ img
     ]);
   }
 }

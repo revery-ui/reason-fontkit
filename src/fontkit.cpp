@@ -53,6 +53,13 @@ extern "C" {
         CAMLreturn(error);
     }
 
+    bool is_dummy(char *face) {
+        char maybeDummy[8];
+        strncpy(maybeDummy, face, 5);
+        maybeDummy[5] = 0;
+        return strcmp(maybeDummy,"dummy") == 0;
+    }
+
     /* Use native open type implementation to load font
       https://github.com/harfbuzz/harfbuzz/issues/255 */
     hb_font_t*
@@ -120,37 +127,50 @@ extern "C" {
         CAMLparam2(vFace, vGlyphId);
         CAMLlocal2(ret, record);
 
-        FontKitFace *pFontKitFace = (FontKitFace *)vFace;
-        long glyphId = Int_val(vGlyphId);
-
-        FT_Face face = *(pFontKitFace->pFreeTypeFace);
-
-        if (FT_Load_Glyph(face, glyphId, FT_LOAD_RENDER)) {
-            ret = Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
-        } else {
+        if (is_dummy((char *)vFace)) {
             ReglfwImageInfo *p = (ReglfwImageInfo *)malloc(sizeof(ReglfwImageInfo));
-            p->numChannels = 1;
-            p->channelSize = 1;
-            p->width = face->glyph->bitmap.width;
-            p->height = face->glyph->bitmap.rows;
-
-            unsigned char *originalBuffer = face->glyph->bitmap.buffer;
-
-            int size = face->glyph->bitmap.width * face->glyph->bitmap.rows;
-            unsigned char* data = (unsigned char *)malloc(size);
-            memcpy(data, originalBuffer, size);
-
-            p->data = data;
-
             record = caml_alloc(6, 0);
-            Store_field(record, 0, Val_int(p->width));
-            Store_field(record, 1, Val_int(p->height));
-            Store_field(record, 2, Val_int(face->glyph->bitmap_left));
-            Store_field(record, 3, Val_int(face->glyph->bitmap_top));
-            Store_field(record, 4, Val_int(face->glyph->advance.x));
+            Store_field(record, 0, 12);
+            Store_field(record, 1, 12);
+            Store_field(record, 2, 0);
+            Store_field(record, 3, 0);
+            Store_field(record, 4, 0);
             Store_field(record, 5, (value)p);
 
             ret = Val_success(record);
+        } else {
+            FontKitFace *pFontKitFace = (FontKitFace *)vFace;
+            long glyphId = Int_val(vGlyphId);
+
+            FT_Face face = *(pFontKitFace->pFreeTypeFace);
+
+            if (FT_Load_Glyph(face, glyphId, FT_LOAD_RENDER)) {
+                ret = Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
+            } else {
+                ReglfwImageInfo *p = (ReglfwImageInfo *)malloc(sizeof(ReglfwImageInfo));
+                p->numChannels = 1;
+                p->channelSize = 1;
+                p->width = face->glyph->bitmap.width;
+                p->height = face->glyph->bitmap.rows;
+
+                unsigned char *originalBuffer = face->glyph->bitmap.buffer;
+
+                int size = face->glyph->bitmap.width * face->glyph->bitmap.rows;
+                unsigned char* data = (unsigned char *)malloc(size);
+                memcpy(data, originalBuffer, size);
+
+                p->data = data;
+
+                record = caml_alloc(6, 0);
+                Store_field(record, 0, Val_int(p->width));
+                Store_field(record, 1, Val_int(p->height));
+                Store_field(record, 2, Val_int(face->glyph->bitmap_left));
+                Store_field(record, 3, Val_int(face->glyph->bitmap_top));
+                Store_field(record, 4, Val_int(face->glyph->advance.x));
+                Store_field(record, 5, (value)p);
+
+                ret = Val_success(record);
+            }
         }
         CAMLreturn(ret);
     }
@@ -171,31 +191,49 @@ extern "C" {
         CAMLlocal1(ret);
 
         FontKitFace *pFontKitFace = (FontKitFace *)vFace;
-        hb_font_t *hb_font = pFontKitFace->pHarfbuzzFace;
 
         hb_buffer_t* hb_buffer;
         hb_buffer = hb_buffer_create();
         hb_buffer_add_utf8(hb_buffer, String_val(vString), -1, 0, -1);
         hb_buffer_guess_segment_properties(hb_buffer);
 
-        hb_shape(hb_font, hb_buffer, NULL, 0);
-
         unsigned int len = hb_buffer_get_length(hb_buffer);
         hb_glyph_info_t *info = hb_buffer_get_glyph_infos(hb_buffer, NULL);
 
         ret = caml_alloc(len, 0);
-        for(int i = 0; i < len; i++) {
-            Store_field(ret, i, createShapeTuple(info[i].codepoint, info[i].cluster));
+
+        if (is_dummy((char *)vFace)) {
+            for(int i = 0; i < len; i++) {
+                Store_field(ret, i, createShapeTuple(0, 0));
+            }
+            hb_buffer_destroy(hb_buffer);
+            CAMLreturn(ret);
+        } else {
+            hb_font_t *hb_font = pFontKitFace->pHarfbuzzFace;
+            hb_shape(hb_font, hb_buffer, NULL, 0);
+
+            for(int i = 0; i < len; i++) {
+                Store_field(ret, i, createShapeTuple(info[i].codepoint, info[i].cluster));
+            }
+            hb_buffer_destroy(hb_buffer);
+            CAMLreturn(ret);
         }
-        hb_buffer_destroy(hb_buffer);
-        CAMLreturn(ret);
+
     }
 
     CAMLprim value
     caml_fk_dummy_font() {
         CAMLparam0();
         CAMLlocal1(ret);
-        ret = caml_alloc(4, 0);
+
+        FT_Face *face = (FT_Face *)malloc(sizeof(FT_Face));
+        char *faceChar = (char *)face;
+        faceChar[0] = 'd';
+        faceChar[1] = 'u';
+        faceChar[2] = 'm';
+        faceChar[3] = 'm';
+        faceChar[4] = 'y';
+        ret = (value)face;
         CAMLreturn(ret);
     }
 }
