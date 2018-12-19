@@ -5,7 +5,7 @@ var DUMMY_FONT = "__FONTKIT__DUMMY__FONT__";
 // Requires: DUMMY_FONT
 function isDummyFont(face) {
   return face.length === 2 && face[0] === DUMMY_FONT;
-};
+}
 
 // Provides: createSuccessValue
 function createSuccessValue(value) {
@@ -22,7 +22,8 @@ function caml_fk_new_face(
   successCallback /*: face => void */,
   failureCallback /*: string => void */
 ) {
-  joo_global_object.fetch(fontName.c)
+  joo_global_object
+    .fetch(fontName.c)
     .then(function toBlob(res) {
       return res.blob();
     })
@@ -41,7 +42,7 @@ function caml_fk_new_face(
     })
     .then(function loadFont(buffer) {
       var fontFace = joo_global_object.Fontkit.create(buffer);
-      // TODO: Find a way to get the size from a font object
+      // HACK: attaching `size` to `fontFace` here to be able to get it later in `caml_fk_load_glyph`
       fontFace.size = size;
       successCallback(fontFace);
     })
@@ -74,23 +75,31 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
     var glyph = face.getGlyph(glyphId);
     // TODO: Can we reuse the same canvas element?
     var canvas = document.createElement("canvas");
-    canvas.width = face.size;
-    canvas.height = face.size;
+    var bbox = glyph.bbox;
+    var scale = (1 / face.unitsPerEm) * face.size;
+    var advanceWidth = Math.round(glyph.advanceWidth * scale);
+    var width = Math.round((bbox.maxX - bbox.minX) * scale);
+    var height = Math.round((bbox.maxY - bbox.minY) * scale);
+    var bearingX = Math.round(glyph._metrics.leftBearing * scale);
+    var bearingY = Math.round(-glyph._metrics.topBearing * scale);
+    canvas.width = width;
+    canvas.height = height;
     var ctx = canvas.getContext("2d");
-    ctx.translate(0, face.size);
+    ctx.translate(0, height);
     ctx.scale(1, -1);
     glyph.render(ctx, face.size);
     return createSuccessValue([
       /* <jsoo_empty> */ 0,
-      /* width */ face.size,
-      /* height */ face.size,
-      /* bearingX */ 0, // glyph._metrics.leftBearing breaks rendering
-      /* bearingY */ 0, // glyph._metrics.topBearing breaks rendering
-      /* advance */ glyph.advanceWidth,
+      /* width */ width,
+      /* height */ height,
+      /* bearingX */ bearingX,
+      /* bearingY */ bearingY,
+      /* advance */ advanceWidth * 64,
       /* image */ canvas
     ]);
   }
 }
+
 // Provides: caml_fk_shape
 // Requires: isDummyFont
 function caml_fk_shape(face /*: fk_face */, text /*: string */) {
@@ -104,8 +113,10 @@ function caml_fk_shape(face /*: fk_face */, text /*: string */) {
       return [/* <jsoo_empty> */ 0, /* glyphId */ 0, /* cluster */ 0];
     });
   } else {
-    var glyphs = face.glyphsForString(str);
-    ret = glyphs.map(function mapper(_glyph) {
+    var run = face.layout(str);
+    ret = run.glyphs.map(function mapper(_glyph, index) {
+      // HACK: attaching `position` to `_glyph` here to be able to get it later in `caml_fk_load_glyph`
+      _glyph.position = run.positions[index];
       return [
         /* <jsoo_empty> */ 0,
         /* glyphId */ _glyph.id,
