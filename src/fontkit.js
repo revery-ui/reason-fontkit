@@ -75,23 +75,20 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
     var glyph = face.getGlyph(glyphId);
     // TODO: Can we reuse the same canvas element?
     var canvas = document.createElement("canvas");
-    var bbox = glyph.bbox;
     var scale = (1 / face.unitsPerEm) * face.size;
-    var advanceWidth = Math.round(glyph.advanceWidth * scale);
-    var width = Math.round((bbox.maxX - bbox.minX) * scale);
-    var height = Math.round((bbox.maxY - bbox.minY) * scale);
-    var bearingX = Math.round(glyph._metrics.leftBearing * scale);
-    var bearingY = Math.round(-glyph._metrics.topBearing * scale);
-    canvas.width = width;
-    canvas.height = height;
+    var advanceWidth = glyph.advanceWidth * scale;
+    var bearingX = glyph._metrics.leftBearing * scale;
+    var bearingY = -glyph._metrics.topBearing * scale;
+    canvas.width = face.size;
+    canvas.height = face.size;
     var ctx = canvas.getContext("2d");
-    ctx.translate(0, height);
+    ctx.translate(0, glyph.bbox.maxY * scale);
     ctx.scale(1, -1);
     glyph.render(ctx, face.size);
     return createSuccessValue([
       /* <jsoo_empty> */ 0,
-      /* width */ width,
-      /* height */ height,
+      /* width */ face.size,
+      /* height */ face.size,
       /* bearingX */ bearingX,
       /* bearingY */ bearingY,
       /* advance */ advanceWidth * 64,
