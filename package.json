@@ -21,8 +21,7 @@
     "refmterr": "^3.1.0",
     "reason-glfw": "^3.2.1001",
     "reason-gl-matrix":"^0.2.0",
-    "esy-cmake": "^0.3.2",
-    "esy-freetype2": "^2.9.1001",
+    "esy-freetype2-prebuilt": "^2.9.1001",
     "esy-harfbuzz": "^1.9.1"
   },
   "resolutions": {
