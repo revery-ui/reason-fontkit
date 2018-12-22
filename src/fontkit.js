@@ -112,8 +112,6 @@ function caml_fk_shape(face /*: fk_face */, text /*: string */) {
   } else {
     var run = face.layout(str);
     ret = run.glyphs.map(function mapper(_glyph, index) {
-      // HACK: attaching `position` to `_glyph` here to be able to get it later in `caml_fk_load_glyph`
-      _glyph.position = run.positions[index];
       return [
         /* <jsoo_empty> */ 0,
         /* glyphId */ _glyph.id,
@@ -121,7 +119,7 @@ function caml_fk_shape(face /*: fk_face */, text /*: string */) {
       ];
     });
   }
-  // Adding the leading `0` to make it a jsoo friendly array
+  // Adding the leading `0` to make it a jsoo compatible array
   ret.unshift(0);
   return ret;
 }
