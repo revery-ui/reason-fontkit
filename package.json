@@ -25,7 +25,8 @@
     "esy-harfbuzz": "^1.9.1"
   },
   "resolutions": {
-    "@opam/cmdliner": "1.0.2"
+    "@opam/cmdliner": "1.0.2",
+    "esy-harfbuzz": "github:esy-packages/esy-harfbuzz#b3ef1a2"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"
