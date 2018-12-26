@@ -22,7 +22,7 @@
     "reason-glfw": "^3.2.1001",
     "reason-gl-matrix":"^0.2.0",
     "esy-freetype2-prebuilt": "^2.9.1005",
-    "esy-harfbuzz": "^1.9.1"
+    "esy-harfbuzz-prebuilt": "^1.9.1003"
   },
   "resolutions": {
     "@opam/cmdliner": "1.0.2"
