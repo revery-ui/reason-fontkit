@@ -1,6 +1,6 @@
 {
   "name": "reason-fontkit",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Fontkit-like API for OCaml/Reason",
   "license": "MIT",
   "esy": {
@@ -23,7 +23,7 @@
     "reason-gl-matrix":"^0.2.0",
     "esy-cmake": "^0.3.2",
     "esy-freetype2": "^2.9.1001",
-    "esy-harfbuzz": "^1.9.1"
+    "esy-harfbuzz": "^1.9.1004"
   },
   "resolutions": {
     "@opam/cmdliner": "1.0.2"
