@@ -100,7 +100,6 @@ extern "C" {
         FT_Library ft = _ftLibrary;
 
         const char *szFont = String_val(vString);
-        printf("- Loading font: %s\n", szFont);
         int iSize = Int_val(vInt);
 
         FT_Face *face = (FT_Face *)malloc(sizeof(FT_Face));
