@@ -1,5 +1,3 @@
-open Reglfw;
-
 exception FontKitLoadFaceException(string);
 exception FontKitRenderGlyphException(string);
 
@@ -12,17 +10,18 @@ type successCallback = fk_face => unit;
 type failureCallback = string => unit;
 
 type fk_glyph = {
-width: int,
-height: int,
-bearingX: int,
-bearingY: int,
-advance: int,
-image: Image.t
+  width: int,
+  height: int,
+  bearingX: int,
+  bearingY: int,
+  advance: int,
+  bitmap:
+    Bigarray.Array2.t(int, Bigarray.int8_unsigned_elt, Bigarray.c_layout),
 };
 
 type fk_shape = {
-    glyphId: int,
-    cluster: int
+  glyphId: int,
+  cluster: int
 };
 
 external fk_new_face: (string, int, successCallback, failureCallback) => unit = "caml_fk_new_face";

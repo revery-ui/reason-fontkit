@@ -104,7 +104,7 @@ let run = () => {
   let render = (s: Fontkit.fk_shape, x: float, y: float) => {
     let glyph = Fontkit.renderGlyph(font, s.glyphId);
 
-    let {image, width, height, bearingX, bearingY, advance, _} = glyph;
+    let {bitmap, width, height, bearingX, bearingY, advance, _} = glyph;
 
     glUniformMatrix4fv(projectionUniform, projection);
     glUniform4f(
@@ -124,10 +124,17 @@ let run = () => {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, image);
+    glTexImage2D(
+      GL_TEXTURE_2D,
+      0,
+      GL_ALPHA,
+      GL_ALPHA,
+      GL_UNSIGNED_BYTE,
+      bitmap,
+    );
 
     glBindBuffer(GL_ARRAY_BUFFER, tb);
-    glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false);
+    glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false, 0, 0);
     glEnableVertexAttribArray(texAttribute);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);

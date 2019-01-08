@@ -1,0 +1,84 @@
+diff a/bin_native/test_fontkit.re b/bin_native/test_fontkit.re	(rejected hunks)
+@@ -37,7 +39,11 @@ let run = () => {
+   glfwMakeContextCurrent(w);
+   glViewport(0, 0, 800, 600);
+ 
+-  let font = Fontkit.load("Roboto-Regular.ttf", 24);
++  let font =
++    switch (Fontkit.Face.load("Roboto-Regular.ttf", 24)) {
++    | Ok(font) => font
++    | Error(_) => raise(FontLoadingException)
++    };
+ 
+   let vsSource = {|
+         #ifndef GL_ES
+@@ -101,18 +108,61 @@ let run = () => {
+   let projection = Mat4.create();
+   Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
+ 
+-  let render = (s: Fontkit.fk_shape, x: float, y: float) => {
+-    let glyph = Fontkit.renderGlyph(font, s.codepoint);
+-
+-    let {image, width, height, bearingX, bearingY, advance, _} = glyph;
++  let renderGlyph = (glyph: Fontkit.Glyph.t, x: float, y: float) => {
++    /* let {bitmap, metrics, advance, _} = glyph; */
++    /* let {width, rows, data, _} = bitmap; */
++    /* let {horizontalBearingX, horizontalBearingY, _} = metrics; */
++
++    print_string("RE: linearHorizontalAdvance: ");
++    print_float(glyph.linearHorizontalAdvance);
++    print_newline();
++    print_string("RE: linearVerticalAdvance: ");
++    print_float(glyph.linearVerticalAdvance);
++    print_newline();
++    print_string("RE: bitmapLeft: ");
++    print_int(glyph.bitmapLeft);
++    print_newline();
++    print_string("RE: bitmapTop: ");
++    print_int(glyph.bitmapTop);
++    print_newline();
++    print_string("RE: metrics width: ");
++    print_float(glyph.metrics.width);
++    print_newline();
++    print_string("RE: metrics height: ");
++    print_float(glyph.metrics.height);
++    print_newline();
++    print_string("RE: horizontalBearingX: ");
++    print_float(glyph.metrics.horizontalBearingX);
++    print_newline();
++    print_string("RE: horizontalBearingY: ");
++    print_float(glyph.metrics.horizontalBearingY);
++    print_newline();
++    print_string("RE: bitmap width: ");
++    print_int(glyph.bitmap.width);
++    print_newline();
++    print_string("RE: bitmap rows: ");
++    print_int(glyph.bitmap.rows);
++    print_newline();
++    print_string("RE: metrics width: ");
++    print_float(glyph.metrics.width);
++    print_newline();
++    print_string("RE: metrics height: ");
++    print_float(glyph.metrics.height);
++    print_newline();
++    print_string("RE: advanceX: ");
++    print_float(glyph.advance.x);
++    print_newline();
++    print_string("RE: advanceY: ");
++    print_float(glyph.advance.y);
++    print_newline();
+ 
+     glUniformMatrix4fv(projectionUniform, projection);
+     glUniform4f(
+       positionUniform,
+-      x +. float_of_int(bearingX),
+-      y -. (float_of_int(height) -. float_of_int(bearingY)),
+-      float_of_int(width),
+-      float_of_int(height),
++      x +. glyph.metrics.horizontalBearingX,
++      y -. (glyph.metrics.height -. glyph.metrics.horizontalBearingY),
++      glyph.metrics.width,
++      glyph.metrics.height,
+     );
+ 
+     glPixelStorei(GL_PACK_ALIGNMENT, 1);

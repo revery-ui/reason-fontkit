@@ -4,14 +4,13 @@
 #include <caml/memory.h>
 #include <caml/alloc.h>
 #include <caml/callback.h>
+#include <caml/bigarray.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include <hb.h>
 #include <hb-ot.h>
-
-#include "reglfw_image.h"
 
 /* #define TEST_FONT "E:/FiraCode-Regular.ttf" */
 /* #define TEST_FONT "E:/Hasklig-Medium.otf" */
@@ -22,17 +21,11 @@ extern "C" {
 
     static FT_Library _ftLibrary;
     static bool _fHasInitedLibrary = false;
+    static char* dummyData = (char*) calloc(144, sizeof(char));
 
     struct FontKitFace {
         FT_Face* pFreeTypeFace;
-        hb_font_t* pHarfbuzzFace;
-    };
-
-    struct FontCharacterInfo {
-        ReglfwImageInfo* image;
-        int bearingX;
-        int bearingY;
-        int advance;
+        hb_font_t* pHarfBuzzFace;
     };
 
     CAMLprim value
@@ -115,7 +108,7 @@ extern "C" {
 
             FontKitFace* pFontKitFace = (FontKitFace *)malloc(sizeof(FontKitFace));
             pFontKitFace->pFreeTypeFace = face;
-            pFontKitFace->pHarfbuzzFace = hb_font;
+            pFontKitFace->pHarfBuzzFace = hb_font;
 
             caml_callback(vSuccess, (value)pFontKitFace);
         }
@@ -125,17 +118,17 @@ extern "C" {
     CAMLprim value
     caml_fk_load_glyph(value vFace, value vGlyphId) {
         CAMLparam2(vFace, vGlyphId);
-        CAMLlocal2(ret, record);
+        CAMLlocal4(ret, record, bitmapData, bitmapBigarray);
 
         if (is_dummy((char *)vFace)) {
-            ReglfwImageInfo *p = (ReglfwImageInfo *)malloc(sizeof(ReglfwImageInfo));
+            bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, dummyData, 12, 12);
             record = caml_alloc(6, 0);
             Store_field(record, 0, 12);
             Store_field(record, 1, 12);
             Store_field(record, 2, 0);
             Store_field(record, 3, 0);
             Store_field(record, 4, 0);
-            Store_field(record, 5, (value)p);
+            Store_field(record, 5, bitmapBigarray);
 
             ret = Val_success(record);
         } else {
@@ -147,27 +140,18 @@ extern "C" {
             if (FT_Load_Glyph(face, glyphId, FT_LOAD_RENDER)) {
                 ret = Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
             } else {
-                ReglfwImageInfo *p = (ReglfwImageInfo *)malloc(sizeof(ReglfwImageInfo));
-                p->numChannels = 1;
-                p->channelSize = 1;
-                p->width = face->glyph->bitmap.width;
-                p->height = face->glyph->bitmap.rows;
-
-                unsigned char *originalBuffer = face->glyph->bitmap.buffer;
-
-                int size = face->glyph->bitmap.width * face->glyph->bitmap.rows;
-                unsigned char* data = (unsigned char *)malloc(size);
-                memcpy(data, originalBuffer, size);
-
-                p->data = data;
+                FT_Bitmap bitmap = face->glyph->bitmap;
+                int bitmapDataLength = bitmap.rows * abs(bitmap.pitch);
+                bitmapData = caml_alloc_initialized_string(bitmapDataLength, (const char *)bitmap.buffer);
+                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, Bytes_val(bitmapData), abs(bitmap.pitch), bitmap.rows);
 
                 record = caml_alloc(6, 0);
-                Store_field(record, 0, Val_int(p->width));
-                Store_field(record, 1, Val_int(p->height));
+                Store_field(record, 0, Val_int(bitmap.width));
+                Store_field(record, 1, Val_int(bitmap.rows));
                 Store_field(record, 2, Val_int(face->glyph->bitmap_left));
                 Store_field(record, 3, Val_int(face->glyph->bitmap_top));
                 Store_field(record, 4, Val_int(face->glyph->advance.x));
-                Store_field(record, 5, (value)p);
+                Store_field(record, 5, bitmapBigarray);
 
                 ret = Val_success(record);
             }
@@ -209,7 +193,7 @@ extern "C" {
             hb_buffer_destroy(hb_buffer);
             CAMLreturn(ret);
         } else {
-            hb_font_t *hb_font = pFontKitFace->pHarfbuzzFace;
+            hb_font_t *hb_font = pFontKitFace->pHarfBuzzFace;
             hb_shape(hb_font, hb_buffer, NULL, 0);
 
             for(int i = 0; i < len; i++) {
