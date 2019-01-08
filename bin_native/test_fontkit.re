@@ -134,7 +134,7 @@ let run = () => {
     );
 
     glBindBuffer(GL_ARRAY_BUFFER, tb);
-    glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false, 0, 0);
+    glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false);
     glEnableVertexAttribArray(texAttribute);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
