@@ -1,12 +1,13 @@
 (library
     (name fontkit)
     (public_name fontkit)
+    (preprocess (pps lwt_ppx))
     (js_of_ocaml (javascript_files fontkit.js fontkit-lib.compiled.js))
     (cxx_names fontkit)
     (library_flags (:include flags.sexp))
     (c_flags (:include c_flags.sexp))
     (cxx_flags (:include cxx_flags.sexp))
-    (libraries reglfw))
+    (libraries lwt))
 
 (rule
     (targets c_flags.sexp cxx_flags.sexp flags.sexp)
