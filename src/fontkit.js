@@ -102,9 +102,7 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
 // Provides: caml_fk_shape
 // Requires: isDummyFont
 function caml_fk_shape(face /*: fk_face */, text /*: string */) {
-  // TODO: Is there any available function to get the JS string from an OCaml
-  // string? Would be better than relying on internal representation
-  var str = joo_global_object.jsoo_runtime.caml_utf16_of_utf8(text.c);
+  var str = joo_global_object.jsoo_runtime.caml_to_js_string(text);
   var isDummy = isDummyFont(face);
   var ret;
   if (isDummy) {
