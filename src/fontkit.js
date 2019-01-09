@@ -84,7 +84,7 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
     canvas.width = glyphWidth;
     canvas.height = glyphHeight;
     var ctx = canvas.getContext("2d");
-    ctx.translate( -bearingX, glyph.bbox.maxY * scale);
+    ctx.translate(-bearingX, glyph.bbox.maxY * scale);
     ctx.scale(1, -1);
     glyph.render(ctx, face.size);
     return createSuccessValue([
@@ -92,7 +92,7 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
       /* width */ glyphWidth,
       /* height */ glyphHeight,
       /* bearingX */ bearingX,
-      /* bearingY */ face.size -bearingY,
+      /* bearingY */ face.size - bearingY,
       /* advance */ advanceWidth * 64,
       /* image */ canvas
     ]);
@@ -104,7 +104,7 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
 function caml_fk_shape(face /*: fk_face */, text /*: string */) {
   // TODO: Is there any available function to get the JS string from an OCaml
   // string? Would be better than relying on internal representation
-  var str = text.c;
+  var str = joo_global_object.jsoo_runtime.caml_utf16_of_utf8(text.c);
   var isDummy = isDummyFont(face);
   var ret;
   if (isDummy) {
