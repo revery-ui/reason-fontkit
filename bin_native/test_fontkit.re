@@ -3,6 +3,16 @@ open Reglfw.Glfw;
 open Reglm;
 open Fontkit;
 
+let isNative =
+  switch (Sys.backend_type) {
+  | Native => true
+  | Bytecode => true
+  | _ => false
+  };
+
+let getExecutingDirectory = () =>
+  isNative ? Filename.dirname(Sys.argv[0]) ++ Filename.dir_sep : "";
+
 print_endline("Hello, world!");
 
 let loadShader = (shaderType, source) => {
@@ -37,7 +47,8 @@ let run = () => {
   glfwMakeContextCurrent(w);
   glViewport(0, 0, 800, 600);
 
-  let%lwt font = Fontkit.load("Roboto-Regular.ttf", 24);
+  let%lwt font =
+    Fontkit.load(getExecutingDirectory() ++ "Roboto-Regular.ttf", 24);
 
   let vsSource = {|
         #ifndef GL_ES
