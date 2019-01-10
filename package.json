@@ -22,15 +22,16 @@
   "dependencies": {
     "@opam/dune": "*",
     "@esy-ocaml/reason": "^3.3.7",
-    "@opam/lwt": "^4.0.0",
-    "@opam/lwt_ppx": "^1.1.0",
     "refmterr": "^3.1.0",
+    "reason-glfw": "*",
+    "reason-gl-matrix": "^0.9.9301",
     "esy-cmake": "^0.3.4",
     "esy-freetype2": "^2.9.1001",
     "esy-harfbuzz": "^1.9.1004"
   },
   "resolutions": {
-    "@opam/cmdliner": "1.0.2"
+    "@opam/cmdliner": "1.0.2",
+    "reason-glfw": "link:../reason-glfw"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"

@@ -1,0 +1,15 @@
+(executable
+    (name test_fontkit)
+    (preprocess (pps lwt_ppx))
+    (public_name test_fontkit)
+    (libraries
+        bigarray
+        lwt
+        lwt.unix
+        reglfw
+        fontkit
+            ))
+
+(install
+    (section bin)
+    (files Roboto-Regular.ttf image4.jpg))
