@@ -64,4 +64,3 @@ typings/
 .merlin
 esy.lock.json
 _esy/
-_build/
