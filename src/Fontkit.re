@@ -9,14 +9,15 @@ type fk_face;
 type successCallback = fk_face => unit;
 type failureCallback = string => unit;
 
+type bitmap = Bigarray.Array2.t(int, Bigarray.int8_unsigned_elt, Bigarray.c_layout);
+
 type fk_glyph = {
   width: int,
   height: int,
   bearingX: int,
   bearingY: int,
   advance: int,
-  bitmap:
-    Bigarray.Array2.t(int, Bigarray.int8_unsigned_elt, Bigarray.c_layout),
+  bitmap: bitmap,
 };
 
 type fk_shape = {
@@ -45,7 +46,7 @@ let load = (fontFile, size) => {
 };
 let debugImageIndex = ref(0);
 
-let saveDebugImage = pixels => {
+let _saveDebugImage = pixels => {
   open Bigarray;
   /* open Reglfw; */
   let width = Array2.dim2(pixels);
@@ -94,12 +95,15 @@ module Memoize = {
   };
 };
 
+let derps: ref(list(bitmap)) = ref([]);
+
 let _renderGlyph = ((face, glyphId)) => {
   let glyph = fk_load_glyph(face, glyphId);
   print_endline("rendering glyph " ++ string_of_int(glyphId));
   switch (glyph) {
   | Success(g) =>
-    saveDebugImage(g.bitmap);
+    /* saveDebugImage(g.bitmap); */
+    derps := List.append([g.bitmap], derps^);
     g;
   | Error(msg) => raise(FontKitRenderGlyphException(msg))
   };
@@ -108,3 +112,4 @@ let _renderGlyph = ((face, glyphId)) => {
 let _memoizedRenderGlyph = Memoize.make(_renderGlyph);
 
 let renderGlyph = (face, glyphId) => _memoizedRenderGlyph((face, glyphId));
+/* let renderGlyph = (face, glyphId) => _renderGlyph((face, glyphId)); */

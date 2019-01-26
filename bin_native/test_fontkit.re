@@ -175,6 +175,7 @@ let run = () => {
     glUseProgram(shaderProgram);
 
     renderString(string_of_float(Unix.gettimeofday()), 0.0, 500.0);
+    /* renderString("12345678901234567890", 0., 400.); */
     renderString("pfi hello=>world !== fiq", 100., 100.);
 
     Gc.full_major();

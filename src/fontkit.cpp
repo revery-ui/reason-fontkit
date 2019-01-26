@@ -32,7 +32,7 @@ extern "C" {
     Val_success(value v) {
         CAMLparam1(v);
         CAMLlocal1(some);
-        some = caml_alloc(1, 0);
+        some = caml_alloc_tuple(1);
         Store_field(some, 0, v);
         CAMLreturn(some);
     }
@@ -41,7 +41,7 @@ extern "C" {
     Val_error(const char* szMsg) {
         CAMLparam0();
         CAMLlocal1(error);
-        error = caml_alloc(1, 1);
+        error = caml_alloc_tuple(1);
         Store_field(error, 0, caml_copy_string(szMsg));
         CAMLreturn(error);
     }
@@ -120,6 +120,7 @@ extern "C" {
         CAMLlocal4(ret, record, bitmapData, bitmapBigarray);
 
         if (is_dummy((char *)vFace)) {
+            printf("Dummy\n");
             bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, dummyData, 12, 12);
             record = caml_alloc(6, 0);
             Store_field(record, 0, 12);
@@ -131,6 +132,7 @@ extern "C" {
 
             ret = Val_success(record);
         } else {
+            printf("No Dummy\n");
             FontKitFace *pFontKitFace = (FontKitFace *)vFace;
             long glyphId = Int_val(vGlyphId);
 
@@ -141,8 +143,13 @@ extern "C" {
             } else {
                 FT_Bitmap bitmap = face->glyph->bitmap;
                 int bitmapDataLength = bitmap.rows * abs(bitmap.pitch);
-                bitmapData = caml_alloc_initialized_string(bitmapDataLength, (const char *)bitmap.buffer);
-                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, Bytes_val(bitmapData), bitmap.rows, abs(bitmap.pitch));
+
+                char* clonedBuffer = (char*)malloc(bitmapDataLength);
+                memcpy(clonedBuffer, (char *)bitmap.buffer, bitmapDataLength);
+                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, (void *)clonedBuffer, bitmap.rows, abs(bitmap.pitch));
+
+                /* bitmapData = caml_alloc_initialized_string(bitmapDataLength, (const char *)bitmap.buffer); */
+                /* bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, Bytes_val(bitmapData), bitmap.rows, abs(bitmap.pitch)); */
 
                 record = caml_alloc(6, 0);
                 Store_field(record, 0, Val_int(bitmap.width));

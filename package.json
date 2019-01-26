@@ -4,6 +4,7 @@
   "description": "Fontkit-like API for OCaml/Reason",
   "license": "MIT",
   "esy": {
+    "buildsInSource": "_build",
     "build": [
       [
         "dune",
