@@ -30,7 +30,8 @@
     "esy-harfbuzz": "^1.9.1004"
   },
   "resolutions": {
-    "@opam/cmdliner": "1.0.2"
+    "@opam/cmdliner": "1.0.2",
+    "reason-glfw": "bryphe/reason-glfw#a182f0a04de54126c4445896dfa71a2c7271936c"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"
