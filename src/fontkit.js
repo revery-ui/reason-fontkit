@@ -100,9 +100,9 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
 }
 
 // Provides: caml_fk_shape
-// Requires: isDummyFont
+// Requires: isDummyFont, caml_to_js_string
 function caml_fk_shape(face /*: fk_face */, text /*: string */) {
-  var str = joo_global_object.jsoo_runtime.caml_to_js_string(text);
+  var str = caml_to_js_string(text);
   var isDummy = isDummyFont(face);
   var ret;
   if (isDummy) {
