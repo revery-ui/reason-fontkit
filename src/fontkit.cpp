@@ -117,7 +117,7 @@ extern "C" {
     CAMLprim value
     caml_fk_load_glyph(value vFace, value vGlyphId) {
         CAMLparam2(vFace, vGlyphId);
-        CAMLlocal4(ret, record, bitmapData, bitmapBigarray);
+        CAMLlocal3(ret, record, bitmapBigarray);
 
         if (is_dummy((char *)vFace)) {
             bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, dummyData, 12, 12);
@@ -141,8 +141,8 @@ extern "C" {
             } else {
                 FT_Bitmap bitmap = face->glyph->bitmap;
                 int bitmapDataLength = bitmap.rows * abs(bitmap.pitch);
-                bitmapData = caml_alloc_initialized_string(bitmapDataLength, (const char *)bitmap.buffer);
-                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, Bytes_val(bitmapData), bitmap.rows, abs(bitmap.pitch));
+                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, NULL, bitmap.rows, abs(bitmap.pitch));
+                memcpy(Caml_ba_data_val(bitmapBigarray), (const char *)bitmap.buffer, bitmapDataLength);
 
                 record = caml_alloc(6, 0);
                 Store_field(record, 0, Val_int(bitmap.width));
