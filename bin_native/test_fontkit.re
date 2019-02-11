@@ -39,6 +39,11 @@ let run = () => {
 
   let%lwt font = Fontkit.load("Roboto-Regular.ttf", 24);
 
+  let metrics = Fontkit.fk_get_metrics(font);
+  print_endline ("-- lineGap: " ++ string_of_int(metrics.lineGap));
+  print_endline ("-- ascent: " ++ string_of_int(metrics.ascent));
+  print_endline ("-- descent: " ++ string_of_int(metrics.descent));
+
   let vsSource = {|
         #ifndef GL_ES
         #define lowp
