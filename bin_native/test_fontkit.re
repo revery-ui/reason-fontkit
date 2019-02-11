@@ -43,6 +43,8 @@ let run = () => {
   print_endline ("-- lineGap: " ++ string_of_int(metrics.lineGap));
   print_endline ("-- ascent: " ++ string_of_int(metrics.ascent));
   print_endline ("-- descent: " ++ string_of_int(metrics.descent));
+  print_endline ("-- underlinePosition: " ++ string_of_int(metrics.underlinePosition));
+  print_endline ("-- underlineThickness: " ++ string_of_int(metrics.underlineThickness));
 
   let vsSource = {|
         #ifndef GL_ES

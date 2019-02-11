@@ -231,17 +231,24 @@ extern "C" {
         int lineGap = -1;
         int ascent = -1;
         int descent = -1;
-        ret = caml_alloc(3, 0);
+        int underlinePosition = 0;
+        int underlineThickness = 1;
+        ret = caml_alloc(5, 0);
 
         if (FT_IS_SCALABLE(pFreeTypeFace)) {
             lineGap = pFreeTypeFace->height;
             ascent = pFreeTypeFace->ascender;
             descent = pFreeTypeFace->descender;
+            underlinePosition = pFreeTypeFace->underlinePosition;
+            underlineThickness = pFreeTypeFace->underlineThickness;
         }
 
         Store_field(ret, 0, Int_val(lineGap));
         Store_field(ret, 1, Int_val(ascent));
         Store_field(ret, 2, Int_val(descent));
+        Store_field(ret, 3, Int_val(underlinePosition));
+        Store_field(ret, 4, Int_val(underlineThickness));
+
         CAMLreturn(ret);
     }
 
