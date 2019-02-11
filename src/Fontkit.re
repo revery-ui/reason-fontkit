@@ -41,6 +41,18 @@ type fk_metrics = {
      * Vertical distance from the horizontal baseline to the lowest 'character' coordinate
      */
     descent: int,
+
+    /*
+     * Vertical position, relative to the baseline, of the undelrine bar's center.
+     * Negative if below baseline
+     */
+    underlinePosition: int,
+
+    /*
+     * When displaying or rendering underlined text, this value corresponds to the
+     * vertical thickness of the underline.
+     */
+    underlineThickness: int,
 };
 
 type fk_shape = {
