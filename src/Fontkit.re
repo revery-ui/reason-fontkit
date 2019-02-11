@@ -3,8 +3,6 @@ open Reglfw;
 exception FontKitLoadFaceException(string);
 exception FontKitRenderGlyphException(string);
 
-social: - 14 - why is it working?
-
 type fk_return('a) =
 | Success('a)
 | Error(string);
@@ -30,7 +28,7 @@ type fk_metrics = {
      *
      * Essentially, a default line spacing for the font.
      */
-    lineGap: int,   
+    height: int,   
 
     /*
      * Vertical distance from the horizontal baseline to the highest 'character' coordinate
@@ -53,6 +51,11 @@ type fk_metrics = {
      * vertical thickness of the underline.
      */
     underlineThickness: int,
+
+    /*
+     * unitsPerEm
+     */
+    unitsPerEm: int,
 };
 
 type fk_shape = {

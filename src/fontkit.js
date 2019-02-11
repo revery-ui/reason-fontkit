@@ -52,6 +52,16 @@ function caml_fk_new_face(
   return undefined;
 }
 
+// Provides: caml_fk_get_metrics
+function caml_fk_get_metrics(
+  face /*fk_face */
+) {
+
+    var height = Math.abs(face.ascent) + Math.abs(face.descent) + face.lineGap;
+
+    return [0, height, face.ascent, face.descent, face.underlinePosition, face.underlineThickness, face.unitsPerEm];
+}
+
 // Provides: caml_fk_load_glyph
 // Requires: isDummyFont, createSuccessValue
 function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
