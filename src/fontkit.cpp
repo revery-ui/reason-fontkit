@@ -221,6 +221,31 @@ extern "C" {
     }
 
     CAMLprim value
+    caml_fk_get_metrics(value vFace) {
+        CAMLparam1(vFace);    
+        CAMLlocal1(ret);
+
+        FontKitFace *pFontKitFace = (FontKitFace *)vFace;
+        FT_Face* pFreeTypeFace = pFontKitFace->pFreeTypeFace;
+
+        int lineGap = -1;
+        int ascent = -1;
+        int descent = -1;
+        ret = caml_alloc(3, 0);
+
+        if (FT_IS_SCALABLE(pFreeTypeFace)) {
+            lineGap = pFreeTypeFace->height;
+            ascent = pFreeTypeFace->ascender;
+            descent = pFreeTypeFace->descender;
+        }
+
+        Store_field(ret, 0, Int_val(lineGap));
+        Store_field(ret, 1, Int_val(ascent));
+        Store_field(ret, 2, Int_val(descent));
+        CAMLreturn(ret);
+    }
+
+    CAMLprim value
     caml_fk_dummy_font() {
         CAMLparam0();
         CAMLlocal1(ret);

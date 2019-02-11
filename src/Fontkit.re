@@ -3,6 +3,8 @@ open Reglfw;
 exception FontKitLoadFaceException(string);
 exception FontKitRenderGlyphException(string);
 
+social: - 14 - why is it working?
+
 type fk_return('a) =
 | Success('a)
 | Error(string);
@@ -20,6 +22,27 @@ advance: int,
 image: Image.t
 };
 
+type fk_metrics = {
+    /*
+     * This represents the 'height' FT_Global_Metric -
+     * From FreeType2 documentation:
+     * https://www.freetype.org/freetype2/docs/tutorial/step2.html
+     *
+     * Essentially, a default line spacing for the font.
+     */
+    lineGap: int,   
+
+    /*
+     * Vertical distance from the horizontal baseline to the highest 'character' coordinate
+     */
+    ascent: int,
+
+    /*
+     * Vertical distance from the horizontal baseline to the lowest 'character' coordinate
+     */
+    descent: int,
+};
+
 type fk_shape = {
     glyphId: int,
     cluster: int
@@ -29,6 +52,7 @@ external fk_new_face: (string, int, successCallback, failureCallback) => unit = 
 external fk_load_glyph: (fk_face, int) => fk_return(fk_glyph) = "caml_fk_load_glyph";
 external fk_shape: (fk_face, string) => array(fk_shape) = "caml_fk_shape";
 external fk_dummy_font: int => fk_face = "caml_fk_dummy_font";
+external fk_get_metrics: fk_face => fk_metrics = "caml_fk_get_metrics";
 
 let dummyFont = fk_dummy_font;
 
