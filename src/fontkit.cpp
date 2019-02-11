@@ -26,6 +26,7 @@ extern "C" {
     struct FontKitFace {
         FT_Face* pFreeTypeFace;
         hb_font_t* pHarfbuzzFace;
+        int iSize;
     };
 
     struct FontCharacterInfo {
@@ -115,6 +116,9 @@ extern "C" {
             FontKitFace* pFontKitFace = (FontKitFace *)malloc(sizeof(FontKitFace));
             pFontKitFace->pFreeTypeFace = face;
             pFontKitFace->pHarfbuzzFace = hb_font;
+            pFontKitFace->iSize = iSize;
+            printf("Setting pFontKitFace->iSize: %d\n", iSize);
+            printf("Actual vale pFontKitFace->iSize: %d\n", pFontKitFace->iSize);
 
             caml_callback(vSuccess, (value)pFontKitFace);
         }
@@ -225,34 +229,60 @@ extern "C" {
         CAMLparam1(vFace);    
         CAMLlocal1(ret);
 
-        FontKitFace *pFontKitFace = (FontKitFace *)vFace;
-        FT_Face* pFreeTypeFace = pFontKitFace->pFreeTypeFace;
+        ret = caml_alloc(7, 0);
 
-        int lineGap = -1;
-        int ascent = -1;
-        int descent = -1;
-        int underlinePosition = 0;
-        int underlineThickness = 1;
-        int unitsPerEm = 1;
-        ret = caml_alloc(6, 0);
+        if (is_dummy((char *)vFace)) {
+            Store_field(ret, 0, Val_int(1));
+            Store_field(ret, 1, Val_int(1));
+            Store_field(ret, 2, Val_int(1));
+            Store_field(ret, 3, Val_int(1));
+            Store_field(ret, 4, Val_int(1));
+            Store_field(ret, 5, Val_int(1));
+            Store_field(ret, 6, Val_int(1));
+        } else {
+            fprintf(stderr, "1!\n");
 
-        FT_Face face = *pFreeTypeFace;
+            FontKitFace *pFontKitFace = (FontKitFace *)vFace;
+            FT_Face* pFreeTypeFace = pFontKitFace->pFreeTypeFace;
 
-        if (FT_IS_SCALABLE(face)) {
-            lineGap = face->height;
-            ascent = face->ascender;
-            descent = face->descender;
-            underlinePosition = face->underline_position;
-            underlineThickness = face->underline_thickness;
-            unitsPerEm = face->units_per_EM;
+            printf("2\n");
+            int lineGap = -1;
+            int ascent = -1;
+            int descent = -1;
+            int underlinePosition = 0;
+            int underlineThickness = 1;
+            int unitsPerEm = 1;
+            int size = pFontKitFace->iSize;
+            printf("3\n");
+
+
+            printf(" pFontKitFace: %p\n", pFontKitFace);
+            printf(" pFreeTypeFace: %p\n", pFreeTypeFace);
+            printf(" pFreeTypeFace: %p\n", pFreeTypeFace);
+            printf(" size: %d\n", pFontKitFace->iSize);
+            FT_Face face = *pFreeTypeFace;
+            printf("4\n");
+
+            if (FT_IS_SCALABLE(face)) {
+                lineGap = face->height;
+                ascent = face->ascender;
+                descent = face->descender;
+                underlinePosition = face->underline_position;
+                underlineThickness = face->underline_thickness;
+                unitsPerEm = face->units_per_EM;
+            }
+            printf("5\n");
+
+            Store_field(ret, 0, Val_int(lineGap));
+            Store_field(ret, 1, Val_int(ascent));
+            Store_field(ret, 2, Val_int(descent));
+            Store_field(ret, 3, Val_int(underlinePosition));
+            Store_field(ret, 4, Val_int(underlineThickness));
+            Store_field(ret, 5, Val_int(unitsPerEm));
+            Store_field(ret, 6, Val_int(size));
+            printf("6\n");
+
         }
-
-        Store_field(ret, 0, Int_val(lineGap));
-        Store_field(ret, 1, Int_val(ascent));
-        Store_field(ret, 2, Int_val(descent));
-        Store_field(ret, 3, Int_val(underlinePosition));
-        Store_field(ret, 4, Int_val(underlineThickness));
-        Store_field(ret, 5, Int_val(unitsPerEm));
 
         CAMLreturn(ret);
     }

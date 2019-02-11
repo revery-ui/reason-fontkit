@@ -53,13 +53,19 @@ function caml_fk_new_face(
 }
 
 // Provides: caml_fk_get_metrics
+// Requires: isDummyFont
 function caml_fk_get_metrics(
   face /*fk_face */
 ) {
 
-    var height = Math.abs(face.ascent) + Math.abs(face.descent) + face.lineGap;
+    var isDummy = isDummyFont(face);
+    if (isDummy) {
+      return [0, face[1], 0, 0, 0, 0, 1, face[1]];
+    } else {
+      var height = Math.abs(face.ascent) + Math.abs(face.descent) + face.lineGap;
 
-    return [0, height, face.ascent, face.descent, face.underlinePosition, face.underlineThickness, face.unitsPerEm];
+      return [0, height, face.ascent, face.descent, face.underlinePosition, face.underlineThickness, face.unitsPerEm, face.size];
+    }
 }
 
 // Provides: caml_fk_load_glyph

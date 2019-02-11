@@ -56,6 +56,11 @@ type fk_metrics = {
      * unitsPerEm
      */
     unitsPerEm: int,
+
+    /*
+     * The integer size passed in when loading the font
+     */
+    size: int,
 };
 
 type fk_shape = {
@@ -67,6 +72,14 @@ external fk_new_face: (string, int, successCallback, failureCallback) => unit = 
 external fk_load_glyph: (fk_face, int) => fk_return(fk_glyph) = "caml_fk_load_glyph";
 external fk_shape: (fk_face, string) => array(fk_shape) = "caml_fk_shape";
 external fk_dummy_font: int => fk_face = "caml_fk_dummy_font";
+
+
+
+
+
+
+
+
 external fk_get_metrics: fk_face => fk_metrics = "caml_fk_get_metrics";
 
 let dummyFont = fk_dummy_font;
