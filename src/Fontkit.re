@@ -21,6 +21,43 @@ type fk_glyph = {
     Array2.t(int, int8_unsigned_elt, c_layout),
 };
 
+type fk_metrics = {
+  /*
+   * This represents the 'height' FT_Global_Metric -
+   * From FreeType2 documentation:
+   * https://www.freetype.org/freetype2/docs/tutorial/step2.html
+   *
+   * Essentially, a default line spacing for the font.
+   */
+  height: int,
+  /*
+   * Vertical distance from the horizontal baseline to the highest 'character' coordinate
+   */
+  ascent: int,
+  /*
+   * Vertical distance from the horizontal baseline to the lowest 'character' coordinate
+   */
+  descent: int,
+  /*
+   * Vertical position, relative to the baseline, of the undelrine bar's center.
+   * Negative if below baseline
+   */
+  underlinePosition: int,
+  /*
+   * When displaying or rendering underlined text, this value corresponds to the
+   * vertical thickness of the underline.
+   */
+  underlineThickness: int,
+  /*
+   * unitsPerEm
+   */
+  unitsPerEm: int,
+  /*
+   * The integer size passed in when loading the font
+   */
+  size: int,
+};
+
 type fk_shape = {
   glyphId: int,
   cluster: int,
@@ -32,6 +69,8 @@ external fk_load_glyph: (fk_face, int) => fk_return(fk_glyph) =
   "caml_fk_load_glyph";
 external fk_shape: (fk_face, string) => array(fk_shape) = "caml_fk_shape";
 external fk_dummy_font: int => fk_face = "caml_fk_dummy_font";
+
+external fk_get_metrics: fk_face => fk_metrics = "caml_fk_get_metrics";
 
 let dummyFont = fk_dummy_font;
 
