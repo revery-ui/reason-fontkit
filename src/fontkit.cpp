@@ -26,6 +26,7 @@ extern "C" {
     struct FontKitFace {
         FT_Face* pFreeTypeFace;
         hb_font_t* pHarfBuzzFace;
+        int iSize;
     };
 
     CAMLprim value
