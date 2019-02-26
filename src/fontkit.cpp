@@ -101,6 +101,7 @@ extern "C" {
             FontKitFace* pFontKitFace = (FontKitFace *)malloc(sizeof(FontKitFace));
             pFontKitFace->pFreeTypeFace = face;
             pFontKitFace->pHarfBuzzFace = hb_font;
+            pFontKitFace->iSize = iSize;
 
             caml_callback(vSuccess, (value)pFontKitFace);
         }
