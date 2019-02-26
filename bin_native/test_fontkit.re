@@ -10,6 +10,8 @@ let isNative =
   | _ => false
   };
 
+Printexc.record_backtrace(true);
+
 let getExecutingDirectory = () =>
   isNative ? Filename.dirname(Sys.argv[0]) ++ Filename.dir_sep : "";
 
@@ -121,7 +123,9 @@ let run = () => {
   Mat4.ortho(projection, 0.0, 800.0, 0.0, 600.0, -0.01, -100.0);
 
   let render = (s: Fontkit.fk_shape, x: float, y: float) => {
+    /* print_endline ("Rendering glyph - start"); */
     let glyph = Fontkit.renderGlyph(font, s.glyphId);
+    print_endline ("Rendering glyph - end");
 
     let {bitmap, width, height, bearingX, bearingY, advance, _} = glyph;
 
@@ -163,7 +167,9 @@ let run = () => {
   };
 
   let renderString = (str: string, x: float, y: float) => {
+    print_endline ("Rendering character: " ++ str);
     let shapes = Fontkit.fk_shape(font, str);
+    print_endline ("Finished rendering character: " ++ str);
     let startX = ref(x);
     Array.iter(
       s => {

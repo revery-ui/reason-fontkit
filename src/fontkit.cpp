@@ -113,7 +113,10 @@ extern "C" {
         CAMLparam2(vFace, vGlyphId);
         CAMLlocal3(ret, record, bitmapBigarray);
 
+        printf("caml_fk_load_glyph: 1\n");
+
         if (is_dummy((char *)vFace)) {
+            printf("load glyph - dummy\n");
             bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, dummyData, 12, 12);
             record = caml_alloc(6, 0);
             Store_field(record, 0, 12);
@@ -125,6 +128,7 @@ extern "C" {
 
             ret = Val_success(record);
         } else {
+        printf("caml_fk_load_glyph: 2\n");
             FontKitFace *pFontKitFace = (FontKitFace *)vFace;
             long glyphId = Int_val(vGlyphId);
 
@@ -133,10 +137,16 @@ extern "C" {
             if (FT_Load_Glyph(face, glyphId, FT_LOAD_RENDER)) {
                 ret = Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
             } else {
+        printf("caml_fk_load_glyph: 3\n");
                 FT_Bitmap bitmap = face->glyph->bitmap;
                 int bitmapDataLength = bitmap.rows * abs(bitmap.pitch);
+        printf("caml_fk_load_glyph: 3.1\n");
+        printf("ROWS: %d\n", bitmap.rows);
+        printf("PITCH: %d\n", bitmap.pitch);
                 bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, NULL, bitmap.rows, abs(bitmap.pitch));
+        printf("caml_fk_load_glyph: 3.2\n");
                 memcpy(Caml_ba_data_val(bitmapBigarray), (const char *)bitmap.buffer, bitmapDataLength);
+        printf("caml_fk_load_glyph: 3.3\n");
 
                 record = caml_alloc(6, 0);
                 Store_field(record, 0, Val_int(bitmap.width));
@@ -146,6 +156,7 @@ extern "C" {
                 Store_field(record, 4, Val_int(face->glyph->advance.x));
                 Store_field(record, 5, bitmapBigarray);
 
+        printf("caml_fk_load_glyph: 4\n");
                 ret = Val_success(record);
             }
         }
