@@ -125,7 +125,7 @@ let run = () => {
   let render = (s: Fontkit.fk_shape, x: float, y: float) => {
     let glyph = Fontkit.renderGlyph(font, s.glyphId);
 
-    let {width, height, bearingX, bearingY, advance, _} = glyph;
+    let {bitmap, width, height, bearingX, bearingY, advance, _} = glyph;
 
     glUniformMatrix4fv(projectionUniform, projection);
     glUniform4f(
