@@ -29,6 +29,7 @@ let extraFlags =
     | _ -> []
     @ ccopt ("-L/usr/lib")
     @ ccopt ("-L/usr/local/lib")
+    @ ccopt ("-L/opt/local/lib")
     @ cclib ("-lbz2")
     @ cclib ("-lpng")
     @ cclib ("-lz")

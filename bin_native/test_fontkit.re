@@ -10,6 +10,8 @@ let isNative =
   | _ => false
   };
 
+Printexc.record_backtrace(true);
+
 let getExecutingDirectory = () =>
   isNative ? Filename.dirname(Sys.argv[0]) ++ Filename.dir_sep : "";
 
@@ -49,6 +51,14 @@ let run = () => {
 
   let%lwt font =
     Fontkit.load(getExecutingDirectory() ++ "Roboto-Regular.ttf", 24);
+
+  let metrics = Fontkit.fk_get_metrics(font);
+  print_endline ("-- height: " ++ string_of_int(metrics.height));
+  print_endline ("-- ascent: " ++ string_of_int(metrics.ascent));
+  print_endline ("-- descent: " ++ string_of_int(metrics.descent));
+  print_endline ("-- underlinePosition: " ++ string_of_int(metrics.underlinePosition));
+  print_endline ("-- underlineThickness: " ++ string_of_int(metrics.underlineThickness));
+  print_endline ("-- unitsPerEm: " ++ string_of_int(metrics.unitsPerEm));
 
   let vsSource = {|
         #ifndef GL_ES

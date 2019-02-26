@@ -26,6 +26,7 @@ extern "C" {
     struct FontKitFace {
         FT_Face* pFreeTypeFace;
         hb_font_t* pHarfBuzzFace;
+        int iSize;
     };
 
     CAMLprim value
@@ -58,17 +59,9 @@ extern "C" {
     hb_font_t*
     get_font_ot(const char *filename, int size)
     {
-      FILE* file = fopen(filename, "rb");
-      fseek(file, 0, SEEK_END);
-      unsigned int length = ftell(file);
-      fseek(file, 0, SEEK_SET);
-
-      char* data = (char *)malloc(length);
-      fread(data, length, 1, file);
-      fclose(file);
-
-      hb_blob_t* blob = hb_blob_create(data, length, HB_MEMORY_MODE_WRITABLE, (void*)data, NULL);
+      hb_blob_t* blob = hb_blob_create_from_file(filename);
       hb_face_t* face = hb_face_create(blob, 0);
+      hb_blob_destroy(blob);
       hb_font_t* font = hb_font_create(face);
 
       hb_ot_font_set_funcs(font);
@@ -108,6 +101,7 @@ extern "C" {
             FontKitFace* pFontKitFace = (FontKitFace *)malloc(sizeof(FontKitFace));
             pFontKitFace->pFreeTypeFace = face;
             pFontKitFace->pHarfBuzzFace = hb_font;
+            pFontKitFace->iSize = iSize;
 
             caml_callback(vSuccess, (value)pFontKitFace);
         }
@@ -202,6 +196,56 @@ extern "C" {
             CAMLreturn(ret);
         }
 
+    }
+
+    CAMLprim value
+    caml_fk_get_metrics(value vFace) {
+        CAMLparam1(vFace);
+        CAMLlocal1(ret);
+
+        ret = caml_alloc(7, 0);
+
+        if (is_dummy((char *)vFace)) {
+            Store_field(ret, 0, Val_int(1));
+            Store_field(ret, 1, Val_int(1));
+            Store_field(ret, 2, Val_int(1));
+            Store_field(ret, 3, Val_int(1));
+            Store_field(ret, 4, Val_int(1));
+            Store_field(ret, 5, Val_int(1));
+            Store_field(ret, 6, Val_int(1));
+        } else {
+            FontKitFace *pFontKitFace = (FontKitFace *)vFace;
+            FT_Face* pFreeTypeFace = pFontKitFace->pFreeTypeFace;
+
+            int lineGap = -1;
+            int ascent = -1;
+            int descent = -1;
+            int underlinePosition = 0;
+            int underlineThickness = 1;
+            int unitsPerEm = 1;
+            int size = pFontKitFace->iSize;
+
+            FT_Face face = *pFreeTypeFace;
+
+            if (FT_IS_SCALABLE(face)) {
+                lineGap = face->height;
+                ascent = face->ascender;
+                descent = face->descender;
+                underlinePosition = face->underline_position;
+                underlineThickness = face->underline_thickness;
+                unitsPerEm = face->units_per_EM;
+            }
+
+            Store_field(ret, 0, Val_int(lineGap));
+            Store_field(ret, 1, Val_int(ascent));
+            Store_field(ret, 2, Val_int(descent));
+            Store_field(ret, 3, Val_int(underlinePosition));
+            Store_field(ret, 4, Val_int(underlineThickness));
+            Store_field(ret, 5, Val_int(unitsPerEm));
+            Store_field(ret, 6, Val_int(size));
+        }
+
+        CAMLreturn(ret);
     }
 
     CAMLprim value
