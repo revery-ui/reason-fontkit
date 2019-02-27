@@ -1,6 +1,15 @@
 // Provides: DUMMY_FONT
 var DUMMY_FONT = "__FONTKIT__DUMMY__FONT__";
 
+// Provides: DUMMY_BITMAP_DIMENSION
+var DUMMY_BITMAP_DIMENSION = 12;
+
+// Provides: DUMMY_PIXELS
+// Requires: DUMMY_BITMAP_DIMENSION
+var DUMMY_PIXELS = new joo_global_object.Uint8Array(
+  DUMMY_BITMAP_DIMENSION * DUMMY_BITMAP_DIMENSION
+);
+
 // Provides: isDummyFont
 // Requires: DUMMY_FONT
 function isDummyFont(face) {
@@ -69,23 +78,28 @@ function caml_fk_get_metrics(
 }
 
 // Provides: caml_fk_load_glyph
-// Requires: isDummyFont, createSuccessValue
+// Requires: isDummyFont, createSuccessValue, caml_ba_create_from, DUMMY_BITMAP_DIMENSION, DUMMY_PIXELS
 function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
   var isDummy = isDummyFont(face);
   // `texImage2D` allows for the texture pixels to be passed as image, canvas or other elements:
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
   if (isDummy) {
-    var img = new joo_global_object.Image();
-    img.src =
-      "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
+    var dummyBitmap = caml_ba_create_from(
+      DUMMY_PIXELS,
+      null,
+      0, // general type
+      3, // kind: uint8
+      0, // c layout
+      [DUMMY_BITMAP_DIMENSION, DUMMY_BITMAP_DIMENSION]
+    );
     return createSuccessValue([
       /* <jsoo_empty> */ 0,
-      /* width */ face[1],
-      /* height */ face[1],
+      /* width */ DUMMY_BITMAP_DIMENSION,
+      /* height */ DUMMY_BITMAP_DIMENSION,
       /* bearingX */ 0,
       /* bearingY */ 0,
       /* advance */ 0,
-      /* image */ img
+      /* bitmap */ dummyBitmap
     ]);
   } else {
     var glyph = face.getGlyph(glyphId);
@@ -95,14 +109,34 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
     var advanceWidth = glyph.advanceWidth * scale;
     var bearingX = glyph._metrics.leftBearing * scale;
     var bearingY = glyph._metrics.topBearing * scale;
-    var glyphWidth = Math.ceil((glyph.bbox.maxX - glyph.bbox.minX) * scale);
-    var glyphHeight = Math.ceil((glyph.bbox.maxY - glyph.bbox.minY) * scale);
+    var glyphWidth = Math.max(
+      Math.ceil((glyph.bbox.maxX - glyph.bbox.minX) * scale),
+      0
+    );
+    var glyphHeight = Math.max(
+      Math.ceil((glyph.bbox.maxY - glyph.bbox.minY) * scale),
+      0
+    );
     canvas.width = glyphWidth;
     canvas.height = glyphHeight;
     var ctx = canvas.getContext("2d");
     ctx.translate(-bearingX, glyph.bbox.maxY * scale);
     ctx.scale(1, -1);
     glyph.render(ctx, face.size);
+    var numChannels = 4; // RGBA
+    var imageData =
+      glyphHeight > 0 && glyphWidth > 0
+        ? ctx.getImageData(0, 0, canvas.width, canvas.height)
+        : null;
+    var pixels = new joo_global_object.Uint8Array(imageData && imageData.data);
+    var bitmap = caml_ba_create_from(
+      pixels,
+      null,
+      0, // general type
+      3, // kind: uint8
+      0, // c layout
+      [glyphHeight, glyphWidth * numChannels]
+    );
     return createSuccessValue([
       /* <jsoo_empty> */ 0,
       /* width */ glyphWidth,
@@ -110,7 +144,7 @@ function caml_fk_load_glyph(face /*: fk_face */, glyphId /*: number */) {
       /* bearingX */ bearingX,
       /* bearingY */ face.size - bearingY,
       /* advance */ advanceWidth * 64,
-      /* image */ canvas
+      /* bitmap */ bitmap
     ]);
   }
 }

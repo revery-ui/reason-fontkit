@@ -3,6 +3,18 @@ open Reglfw.Glfw;
 open Reglm;
 open Fontkit;
 
+let isNative =
+  switch (Sys.backend_type) {
+  | Native => true
+  | Bytecode => true
+  | _ => false
+  };
+
+Printexc.record_backtrace(true);
+
+let getExecutingDirectory = () =>
+  isNative ? Filename.dirname(Sys.argv[0]) ++ Filename.dir_sep : "";
+
 print_endline("Hello, world!");
 
 let loadShader = (shaderType, source) => {
@@ -37,7 +49,16 @@ let run = () => {
   glfwMakeContextCurrent(w);
   glViewport(0, 0, 800, 600);
 
-  let%lwt font = Fontkit.load("Roboto-Regular.ttf", 24);
+  let%lwt font =
+    Fontkit.load(getExecutingDirectory() ++ "Roboto-Regular.ttf", 24);
+
+  let metrics = Fontkit.fk_get_metrics(font);
+  print_endline ("-- height: " ++ string_of_int(metrics.height));
+  print_endline ("-- ascent: " ++ string_of_int(metrics.ascent));
+  print_endline ("-- descent: " ++ string_of_int(metrics.descent));
+  print_endline ("-- underlinePosition: " ++ string_of_int(metrics.underlinePosition));
+  print_endline ("-- underlineThickness: " ++ string_of_int(metrics.underlineThickness));
+  print_endline ("-- unitsPerEm: " ++ string_of_int(metrics.unitsPerEm));
 
   let metrics = Fontkit.fk_get_metrics(font);
   print_endline ("-- height: " ++ string_of_int(metrics.height));
@@ -112,7 +133,7 @@ let run = () => {
   let render = (s: Fontkit.fk_shape, x: float, y: float) => {
     let glyph = Fontkit.renderGlyph(font, s.glyphId);
 
-    let {image, width, height, bearingX, bearingY, advance, _} = glyph;
+    let {bitmap, width, height, bearingX, bearingY, advance, _} = glyph;
 
     glUniformMatrix4fv(projectionUniform, projection);
     glUniform4f(
@@ -132,7 +153,14 @@ let run = () => {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, image);
+    glTexImage2D(
+      GL_TEXTURE_2D,
+      0,
+      GL_ALPHA,
+      GL_ALPHA,
+      GL_UNSIGNED_BYTE,
+      bitmap,
+    );
 
     glBindBuffer(GL_ARRAY_BUFFER, tb);
     glVertexAttribPointer(texAttribute, 2, GL_FLOAT, false);

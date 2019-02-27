@@ -1,4 +1,4 @@
-open Reglfw;
+open Bigarray;
 
 exception FontKitLoadFaceException(string);
 exception FontKitRenderGlyphException(string);
@@ -17,7 +17,8 @@ type fk_glyph = {
   bearingX: int,
   bearingY: int,
   advance: int,
-  image: Image.t,
+  bitmap:
+    Array2.t(int, int8_unsigned_elt, c_layout),
 };
 
 type fk_metrics = {
