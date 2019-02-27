@@ -17,12 +17,8 @@ type fk_glyph = {
   bearingX: int,
   bearingY: int,
   advance: int,
-<<<<<<< HEAD
   bitmap:
     Array2.t(int, int8_unsigned_elt, c_layout),
-=======
-  image: Image.t,
->>>>>>> master
 };
 
 type fk_metrics = {
