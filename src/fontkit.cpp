@@ -134,9 +134,8 @@ extern "C" {
                 ret = Val_error("[ERROR]: Unable to render character at FT_Load_Char\n");
             } else {
                 FT_Bitmap bitmap = face->glyph->bitmap;
-                int bitmapDataLength = bitmap.rows * abs(bitmap.pitch);
-                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, NULL, bitmap.rows, abs(bitmap.pitch));
-                memcpy(Caml_ba_data_val(bitmapBigarray), (const char *)bitmap.buffer, bitmapDataLength);
+                /* int bitmapDataLength = bitmap.rows * abs(bitmap.pitch); */
+                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, bitmap.buffer, bitmap.rows, abs(bitmap.pitch));
 
                 record = caml_alloc(6, 0);
                 Store_field(record, 0, Val_int(bitmap.width));
