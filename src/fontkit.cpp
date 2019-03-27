@@ -135,7 +135,8 @@ extern "C" {
             } else {
                 FT_Bitmap bitmap = face->glyph->bitmap;
                 int bitmapDataLength = bitmap.rows * abs(bitmap.pitch);
-                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, NULL, bitmap.rows, abs(bitmap.pitch));
+                char* c = (char *)malloc(sizeof(char) * bitmapDataLength);
+                bitmapBigarray = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT, 2, (void *)c, bitmap.rows, abs(bitmap.pitch));
                 memcpy(Caml_ba_data_val(bitmapBigarray), (const char *)bitmap.buffer, bitmapDataLength);
 
                 record = caml_alloc(6, 0);
