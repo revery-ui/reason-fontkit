@@ -20,10 +20,10 @@
     "ocaml": "~4.6.0"
   },
   "dependencies": {
-    "@opam/dune": "*",
+    "@opam/dune": "1.7.3",
     "@esy-ocaml/reason": "^3.3.7",
     "refmterr": "^3.1.0",
-    "reason-glfw": "3.2.1020",
+    "reason-glfw": "^3.2.1020",
     "reason-gl-matrix": "^0.9.9301",
     "esy-cmake": "^0.3.4",
     "esy-freetype2": "^2.9.1001",
