@@ -34,13 +34,19 @@ let extraFlags =
     @ cclib ("-lpng")
     @ cclib ("-lz")
 
-let flags = []
-    @ ccopt "-L."
+let lib_path_flags =
+    match get_os with
+    | Linux -> []
+    | _ -> []
     @ ccopt ("-L" ^ (Sys.getenv "FREETYPE2_LIB_PATH"))
     @ ccopt ("-L" ^ (Sys.getenv "HARFBUZZ_LIB_PATH"))
+
+let flags = []
+    @ ccopt "-L."
     @ cclib ("-lfreetype")
     @ cclib ("-lharfbuzz")
     @ extraFlags
+    @ lib_path_flags
 ;;
 
 let cxx_flags =
