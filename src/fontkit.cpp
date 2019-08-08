@@ -59,9 +59,17 @@ extern "C" {
     hb_font_t*
     get_font_ot(const char *filename, int size)
     {
-      hb_blob_t* blob = hb_blob_create_from_file(filename);
+      FILE* file = fopen(filename, "rb");
+      fseek(file, 0, SEEK_END);
+      unsigned int length = ftell(file);
+      fseek(file, 0, SEEK_SET);
+
+      char* data = (char *)malloc(length);
+      fread(data, length, 1, file);
+      fclose(file);
+
+      hb_blob_t* blob = hb_blob_create(data, length, HB_MEMORY_MODE_WRITABLE, (void*)data, NULL);
       hb_face_t* face = hb_face_create(blob, 0);
-      hb_blob_destroy(blob);
       hb_font_t* font = hb_font_create(face);
 
       hb_ot_font_set_funcs(font);
