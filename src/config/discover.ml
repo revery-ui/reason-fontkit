@@ -18,7 +18,7 @@ let get_os =
         | "Linux" -> Linux
         | _ -> Unknown
 
-let c_flags = ["-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys.getenv "HARFBUZZ_INCLUDE_PATH")]
+let c_flags = ["-fPIC"; "-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys.getenv "HARFBUZZ_INCLUDE_PATH")]
 
 let ccopt s = ["-ccopt"; s]
 let cclib s = ["-cclib"; s]
