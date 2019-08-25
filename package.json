@@ -20,7 +20,7 @@
     "ocaml": "~4.6.0"
   },
   "dependencies": {
-    "@opam/dune": "1.7.3",
+    "@opam/dune": "^1.7.3",
     "@esy-ocaml/reason": "^3.3.7",
     "refmterr": "^3.1.0",
     "reason-glfw": "^3.2.1020",
@@ -30,7 +30,8 @@
     "esy-harfbuzz": "^1.9.1004"
   },
   "resolutions": {
-    "@opam/cmdliner": "1.0.2"
+    "@opam/cmdliner": "1.0.2",
+    "reason-gl-matrix": "github:bryphe/reason-gl-matrix#daaeeee"
   },
   "devDependencies": {
     "ocaml": "~4.6.0"
