@@ -23,6 +23,8 @@ let c_flags = ["-fPIC"; "-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys
 let ccopt s = ["-ccopt"; s]
 let cclib s = ["-cclib"; s]
 
+let _ = print_endline ("HARFBUZZ_LIB_PATH: " ^ (Sys.getenv "HARFBUZZ_LIB_PATH"));
+
 let extraFlags = 
     match get_os with
     | Windows -> []
