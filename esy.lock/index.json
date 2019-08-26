@@ -1,5 +1,5 @@
 {
-  "checksum": "a5c257afb5132219b8a05621b46dc00e",
+  "checksum": "0500b0ed3b6491c5e017021de47d5369",
   "root": "reason-fontkit@link-dev:./package.json",
   "node": {
     "rejest@1.3.0@d41d8cd9": {
@@ -45,14 +45,14 @@
       ],
       "devDependencies": []
     },
-    "reason-glfw@3.2.1028@d41d8cd9": {
-      "id": "reason-glfw@3.2.1028@d41d8cd9",
+    "reason-glfw@3.2.1029@d41d8cd9": {
+      "id": "reason-glfw@3.2.1029@d41d8cd9",
       "name": "reason-glfw",
-      "version": "3.2.1028",
+      "version": "3.2.1029",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/reason-glfw/-/reason-glfw-3.2.1028.tgz#sha1:7e6aae9b5cbf4fdaef46c2855e343eefd97e3808"
+          "archive:https://registry.npmjs.org/reason-glfw/-/reason-glfw-3.2.1029.tgz#sha1:5519aad174fcce32a9c3608c013a1ebbf27f38c9"
         ]
       },
       "overrides": [],
@@ -98,7 +98,7 @@
       },
       "overrides": [],
       "dependencies": [
-        "refmterr@3.2.2@d41d8cd9", "reason-glfw@3.2.1028@d41d8cd9",
+        "refmterr@3.2.2@d41d8cd9", "reason-glfw@3.2.1029@d41d8cd9",
         "reason-gl-matrix@0.9.9305@d41d8cd9",
         "esy-harfbuzz@1.9.1005@d41d8cd9", "esy-freetype2@2.9.1006@d41d8cd9",
         "esy-cmake@0.3.5@d41d8cd9", "@opam/dune@opam:1.11.3@9894df55",
