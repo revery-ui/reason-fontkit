@@ -8,8 +8,8 @@
       [
         "dune",
         "build",
-        "--root",
-        "."
+        "-p",
+        "fontkit"
       ]
     ],
     "install": [
@@ -20,7 +20,6 @@
     "@opam/dune": ">=1.6.0",
     "@esy-ocaml/reason": "^3.3.7",
     "refmterr": "^3.1.0",
-    "reason-glfw": "^3.2.1029",
     "reason-gl-matrix": "^0.9.9305",
     "esy-cmake": "^0.3.4",
     "esy-freetype2": "^2.9.1001",
