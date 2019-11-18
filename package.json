@@ -1,6 +1,6 @@
 {
   "name": "reason-fontkit",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "Fontkit-like API for OCaml/Reason",
   "license": "MIT",
   "esy": {
