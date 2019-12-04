@@ -19,9 +19,7 @@
   "dependencies": {
     "@opam/dune": ">=1.6.0",
     "@opam/lwt": "*",
-    "@esy-ocaml/reason": "^3.3.7",
     "reason-gl-matrix": "^0.9.9305",
-    "esy-cmake": "^0.3.4",
     "esy-freetype2": "^2.9.1001",
     "esy-harfbuzz": "^1.9.1005"
   },
@@ -30,6 +28,8 @@
     "@opam/camomile": "1.0.1"
   },
   "devDependencies": {
+    "esy-cmake": "^0.3.4",
+    "@esy-ocaml/reason": "^3.3.7",
     "ocaml": ">=4.4.0"
   }
 }
