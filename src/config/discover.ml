@@ -23,16 +23,18 @@ let c_flags = ["-fPIC"; "-I";  (Sys.getenv "FREETYPE2_INCLUDE_PATH"); "-I"; (Sys
 let ccopt s = ["-ccopt"; s]
 let cclib s = ["-cclib"; s]
 
-let extraFlags = 
+let extraFlags =
     match get_os with
     | Windows -> []
     | _ -> []
     @ ccopt ("-L/usr/lib")
     @ ccopt ("-L/usr/local/lib")
-    @ ccopt ("-L/opt/local/lib")
     @ cclib ("-lbz2")
     @ cclib ("-lpng")
     @ cclib ("-lz")
+    @ match Sys.file_exists "/opt/local/lib" with
+      | true -> ccopt ("-L/opt/local/lib")
+      | false -> []
 
 let lib_path_flags =
     match get_os with
