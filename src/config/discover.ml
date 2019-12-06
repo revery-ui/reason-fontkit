@@ -27,7 +27,6 @@ let extraFlags =
     match get_os with
     | Windows -> []
     | _ -> []
-    @ ccopt ("-L/usr/lib")
     @ ccopt ("-L/usr/local/lib")
     @ cclib ("-lbz2")
     @ cclib ("-lpng")
