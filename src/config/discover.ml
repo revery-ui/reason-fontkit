@@ -37,7 +37,7 @@ let extraFlags =
     | Windows -> []
     | Mac -> posixFlags
     | Linux -> ccopt("-L/usr/lib")
-        @ posixFlags
+    @ posixFlags
 
 let lib_path_flags =
     match get_os with
